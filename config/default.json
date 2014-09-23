@@ -1,0 +1,13 @@
+{
+  "http": {
+    "port": 8080
+  },
+  "mongo": {
+    "db": "mongodb://localhost/hoist-default"
+  },
+  "hoist":{
+    "domains":{
+      "webhooks":".incomming.hoi.io"
+    }
+  }
+}

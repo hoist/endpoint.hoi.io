@@ -35,7 +35,11 @@ describe('server', function () {
   });
   describe('#processRequest', function () {
     before(function () {
-      var request = httpMocks.createRequest({});
+      var request = httpMocks.createRequest({
+        headers:{
+          host:'something.internal.hoi.io'
+        }
+      });
       var response = httpMocks.createResponse({});
       server.processRequest(request, response);
     });

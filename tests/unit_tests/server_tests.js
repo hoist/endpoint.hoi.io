@@ -39,6 +39,7 @@ describe('server', function () {
     });
   });
   describe('#processRequest', function () {
+    var response;
     before(function () {
       var request = httpMocks.createRequest({
         headers: {
@@ -46,12 +47,12 @@ describe('server', function () {
         },
         url: '/invoice/new',
         method: 'POST',
-        body:'some text'
+        body: 'some text'
       });
-      var response = httpMocks.createResponse({});
+      response = httpMocks.createResponse({});
       sinon.stub(Application, 'findAsync', function () {
         return BBPromise.resolve(new Application({
-          _id:'applicationId',
+          _id: 'applicationId',
           settings: {
             live: {
               endpoints: {
@@ -82,11 +83,13 @@ describe('server', function () {
         .to.have.been.calledWith(sinon.match.instanceOf(ApplicationEvent));
     });
     it('publish the correct event', function () {
+
       expect(EventBroker.publish.firstCall.args[0])
         .to.eql(new ApplicationEvent({
-          applicationId:'applicationId',
+          applicationId: 'applicationId',
           eventName: 'post.invoice',
-          environment:'live',
+          environment: 'live',
+          correlationId:response.header('CID'),
           body: {
             request: {
               headers: {
@@ -94,7 +97,7 @@ describe('server', function () {
               },
               url: '/invoice/new',
               method: 'POST',
-              body:'some text'
+              body: 'some text'
             },
             params: {
               authenticate: true,
@@ -105,10 +108,12 @@ describe('server', function () {
         }));
     });
     it('sends a 200 response', function () {
-
+      expect(response.statusCode).to.eql(200);
     });
     it('replies with the CID', function () {
-
+      /*jshint -W030*/
+      console.log(response);
+      expect(response.header('CID')).to.exist;
     });
   });
 });

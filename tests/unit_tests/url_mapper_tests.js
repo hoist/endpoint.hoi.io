@@ -45,7 +45,6 @@ describe('UrlMapper', function () {
         url: '/status?name=ryan',
         method: 'GET'
       })).to.eql({
-        'methods': ['GET'],
         'event': 'get.invoices',
         'authenticated': true
       });
@@ -63,8 +62,7 @@ describe('UrlMapper', function () {
       })).to.eql({
         'event': 'get.invoices',
         'authenticated': true,
-        'name': 'ryan',
-        'methods': ['GET', 'POST']
+        'name': 'ryan'
       });
     });
     it('returns null if methods dont match', function () {

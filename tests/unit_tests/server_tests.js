@@ -112,7 +112,6 @@ describe('server', function () {
     });
     it('replies with the CID', function () {
       /*jshint -W030*/
-      console.log(response);
       expect(response.header('CID')).to.exist;
     });
   });

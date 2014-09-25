@@ -167,9 +167,48 @@ describe('server', function () {
         expect(parseInt(response.statusCode)).to.eql(404);
       });
       it('should publish a message', function () {
-        expect(response._getData()).to.eql('Http404Error: No Endpoint Found\nCode: 404');
+        expect(response._getData()).to.eql('No Endpoint Found');
       });
     });
-
+    describe('with no matching application', function () {
+      var response;
+      before(function () {
+        var request = httpMocks.createRequest({
+          headers: {
+            host: 'something.incomming.hoi.io'
+          },
+          url: '/something/else',
+          method: 'POST',
+          body: 'some text'
+        });
+        response = httpMocks.createResponse({});
+        sinon.stub(Application, 'findAsync', function () {
+          return BBPromise.resolve(null);
+        });
+        sinon.stub(EventBroker, 'publish').callsArg(1);
+        server.processRequest(request, response);
+      });
+      after(function () {
+        EventBroker.publish.restore();
+        Application.findAsync.restore();
+      });
+      it('looks-up app based on host', function () {
+        expect(Application.findAsync)
+          .to.have.been.calledWith({
+            subDomain: 'something'
+          });
+      });
+      it('doesn\'t publish application event', function () {
+        /*jshint -W030*/
+        expect(EventBroker.publish)
+          .to.have.not.been.called;
+      });
+      it('sends a 404 response', function () {
+        expect(parseInt(response.statusCode)).to.eql(404);
+      });
+      it('should publish a message', function () {
+        expect(response._getData()).to.eql('The specified application could not be found');
+      });
+    });
   });
 });

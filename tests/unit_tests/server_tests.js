@@ -39,80 +39,137 @@ describe('server', function () {
     });
   });
   describe('#processRequest', function () {
-    var response;
-    before(function () {
-      var request = httpMocks.createRequest({
-        headers: {
-          host: 'something.incomming.hoi.io'
-        },
-        url: '/invoice/new',
-        method: 'POST',
-        body: 'some text'
-      });
-      response = httpMocks.createResponse({});
-      sinon.stub(Application, 'findAsync', function () {
-        return BBPromise.resolve(new Application({
-          _id: 'applicationId',
-          settings: {
-            live: {
-              endpoints: {
-                '/invoice/:method': {
-                  methods: ['POST'],
-                  event: 'post.invoice',
-                  authenticate: true
+    describe('if endpoint exists', function () {
+      var response;
+      before(function () {
+        var request = httpMocks.createRequest({
+          headers: {
+            host: 'something.incomming.hoi.io'
+          },
+          url: '/invoice/new',
+          method: 'POST',
+          body: 'some text'
+        });
+        response = httpMocks.createResponse({});
+        sinon.stub(Application, 'findAsync', function () {
+          return BBPromise.resolve(new Application({
+            _id: 'applicationId',
+            settings: {
+              live: {
+                endpoints: {
+                  '/invoice/:method': {
+                    methods: ['POST'],
+                    event: 'post.invoice',
+                    authenticate: true
+                  }
                 }
               }
             }
-          }
-        }));
-      });
-      sinon.stub(EventBroker, 'publish').callsArg(1);
-      server.processRequest(request, response);
-    });
-    after(function () {
-      Application.findAsync.restore();
-    });
-    it('looks-up app based on host', function () {
-      expect(Application.findAsync)
-        .to.have.been.calledWith({
-          subDomain: 'something'
+          }));
         });
-    });
-    it('publishes application event', function () {
-      expect(EventBroker.publish)
-        .to.have.been.calledWith(sinon.match.instanceOf(ApplicationEvent));
-    });
-    it('publish the correct event', function () {
+        sinon.stub(EventBroker, 'publish').callsArg(1);
+        server.processRequest(request, response);
+      });
+      after(function () {
+        EventBroker.publish.restore();
+        Application.findAsync.restore();
+      });
+      it('looks-up app based on host', function () {
+        expect(Application.findAsync)
+          .to.have.been.calledWith({
+            subDomain: 'something'
+          });
+      });
+      it('publishes application event', function () {
+        expect(EventBroker.publish)
+          .to.have.been.calledWith(sinon.match.instanceOf(ApplicationEvent));
+      });
+      it('publish the correct event', function () {
 
-      expect(EventBroker.publish.firstCall.args[0])
-        .to.eql(new ApplicationEvent({
-          applicationId: 'applicationId',
-          eventName: 'post.invoice',
-          environment: 'live',
-          correlationId:response.header('CID'),
-          body: {
-            request: {
-              headers: {
-                host: 'something.incomming.hoi.io'
+        expect(EventBroker.publish.firstCall.args[0])
+          .to.eql(new ApplicationEvent({
+            applicationId: 'applicationId',
+            eventName: 'post.invoice',
+            environment: 'live',
+            correlationId: response.header('CID'),
+            body: {
+              request: {
+                headers: {
+                  host: 'something.incomming.hoi.io'
+                },
+                url: '/invoice/new',
+                method: 'POST',
+                body: 'some text'
               },
-              url: '/invoice/new',
-              method: 'POST',
-              body: 'some text'
-            },
-            params: {
-              authenticate: true,
-              event: 'post.invoice',
-              method: 'new'
+              params: {
+                authenticate: true,
+                event: 'post.invoice',
+                method: 'new'
+              }
             }
-          }
-        }));
+          }));
+      });
+      it('sends a 200 response', function () {
+        expect(response.statusCode).to.eql(200);
+      });
+      it('replies with the CID', function () {
+        /*jshint -W030*/
+        expect(response.header('CID')).to.exist;
+      });
     });
-    it('sends a 200 response', function () {
-      expect(response.statusCode).to.eql(200);
+    describe('with no matching endpoint', function () {
+      var response;
+      before(function () {
+        var request = httpMocks.createRequest({
+          headers: {
+            host: 'something.incomming.hoi.io'
+          },
+          url: '/something/else',
+          method: 'POST',
+          body: 'some text'
+        });
+        response = httpMocks.createResponse({});
+        sinon.stub(Application, 'findAsync', function () {
+          return BBPromise.resolve(new Application({
+            _id: 'applicationId',
+            settings: {
+              live: {
+                endpoints: {
+                  '/invoice/:method': {
+                    methods: ['POST'],
+                    event: 'post.invoice',
+                    authenticate: true
+                  }
+                }
+              }
+            }
+          }));
+        });
+        sinon.stub(EventBroker, 'publish').callsArg(1);
+        server.processRequest(request, response);
+      });
+      after(function () {
+        EventBroker.publish.restore();
+        Application.findAsync.restore();
+      });
+      it('looks-up app based on host', function () {
+        expect(Application.findAsync)
+          .to.have.been.calledWith({
+            subDomain: 'something'
+          });
+      });
+      it('doesn\'t publish application event', function () {
+        /*jshint -W030*/
+        expect(EventBroker.publish)
+          .to.have.not.been.called;
+      });
+      it('sends a 404 response', function () {
+        expect(parseInt(response.statusCode)).to.eql(404);
+      });
+      it('should publish a message', function () {
+        expect(response._getData()).to.eql('Http404Error: No Endpoint Found\nCode: 404');
+      });
     });
-    it('replies with the CID', function () {
-      /*jshint -W030*/
-      expect(response.header('CID')).to.exist;
-    });
+
   });
 });

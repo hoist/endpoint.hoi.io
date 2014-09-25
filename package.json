@@ -34,6 +34,7 @@
     "bluebird": "^2.3.2",
     "broker": "git://github.com/hoist/broker",
     "config": "^1.2.0",
+    "hoist-errors": "git://github.com/hoist/hoist-errors",
     "hoist-model": "git://github.com/hoist/hoist-model",
     "lodash": "^2.4.1",
     "routes": "^1.2.0",

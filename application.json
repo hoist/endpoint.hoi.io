@@ -1,6 +1,6 @@
 [{
   "name": "hoist-webhooks-listener",
-  "script": "./lib/server.js",
+  "script": "./app.js",
   "log_date_format": "YYYY-MM-DD HH:mm Z",
   "error_file": "/var/log/node/hoist-webhooks-listener.stderr.log",
   "out_file": "/var/log/node/hoist-webhooks-listener.stdout.log",

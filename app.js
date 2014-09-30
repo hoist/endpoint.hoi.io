@@ -3,6 +3,7 @@
 var server = require('./lib/server');
 
 process.on('message', function (msg) {
+  console.log('got message',msg);
   if (msg === 'shutdown') {
     // Your process is going to be reloaded
     // You have to close all database/socket.io/* connections

@@ -1,12 +1,10 @@
 [{
   "name": "hoist-webhooks-listener",
   "script": "./app.js",
-  "log_date_format": "YYYY-MM-DD HH:mm Z",
+  "log_date_format": "YYYY-MM-DD HH:mm:ss Z",
   "error_file": "/var/log/node/hoist-webhooks-listener.stderr.log",
   "out_file": "/var/log/node/hoist-webhooks-listener.stdout.log",
-  "pid_file": "./pids/hoist-webhooks-listener.pid",
-  "instances": "max",
-  "cron_restart": "01 00 * * 0",
+  "instances": "2",
   "merge_logs": true,
   "exec_mode": "cluster_mode",
   "env": {

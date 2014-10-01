@@ -52,7 +52,7 @@ describe('server', function () {
         });
         response = httpMocks.createResponse({});
         sinon.stub(Application, 'findAsync', function () {
-          return BBPromise.resolve(new Application({
+          return BBPromise.resolve([new Application({
             _id: 'applicationId',
             settings: {
               live: {
@@ -65,7 +65,7 @@ describe('server', function () {
                 }
               }
             }
-          }));
+          })]);
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
         server.processRequest(request, response);
@@ -130,7 +130,7 @@ describe('server', function () {
         });
         response = httpMocks.createResponse({});
         sinon.stub(Application, 'findAsync', function () {
-          return BBPromise.resolve(new Application({
+          return BBPromise.resolve([new Application({
             _id: 'applicationId',
             settings: {
               live: {
@@ -143,7 +143,7 @@ describe('server', function () {
                 }
               }
             }
-          }));
+          })]);
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
         server.processRequest(request, response);
@@ -183,7 +183,7 @@ describe('server', function () {
         });
         response = httpMocks.createResponse({});
         sinon.stub(Application, 'findAsync', function () {
-          return BBPromise.resolve(null);
+          return BBPromise.resolve([]);
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
         server.processRequest(request, response);

@@ -1,7 +1,6 @@
 'use strict';
 require('../bootstrap.js');
 var http = require('http');
-var httpMocks = require('node-mocks-http');
 var sinon = require('sinon');
 var server = require('../../lib/server');
 var expect = require('chai').expect;
@@ -11,7 +10,7 @@ var mongoose = hoistModel._mongoose;
 var BBPromise = require('bluebird');
 var EventBroker = require('broker/lib/event_broker');
 var ApplicationEvent = require('broker/lib/event_types/application_event');
-
+var supertest = require('supertest');
 describe('server', function () {
   describe('#start', function () {
     var stubbedServer = {
@@ -41,16 +40,9 @@ describe('server', function () {
   describe('#processRequest', function () {
     describe('if endpoint exists', function () {
       var response;
-      before(function () {
-        var request = httpMocks.createRequest({
-          headers: {
-            host: 'something.incomming.hoi.io'
-          },
-          url: '/invoice/new',
-          method: 'POST',
-          body: 'some text'
-        });
-        response = httpMocks.createResponse({});
+      before(function (done) {
+
+
         sinon.stub(Application, 'findAsync', function () {
           return BBPromise.resolve([new Application({
             _id: 'applicationId',
@@ -68,7 +60,18 @@ describe('server', function () {
           })]);
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
-        server.processRequest(request, response);
+        supertest(server.createServer())
+          .post('/invoice/new')
+          .set('host', 'something.incomming.hoi.io')
+          .send({
+            key: 'value'
+          })
+          .end(function (err, res) {
+            response = res;
+            done();
+          });
+
+
       });
       after(function () {
         EventBroker.publish.restore();
@@ -85,50 +88,52 @@ describe('server', function () {
           .to.have.been.calledWith(sinon.match.instanceOf(ApplicationEvent));
       });
       it('publish the correct event', function () {
-
-        expect(EventBroker.publish.firstCall.args[0])
-          .to.eql(new ApplicationEvent({
-            applicationId: 'applicationId',
-            eventName: 'post.invoice',
-            environment: 'live',
-            correlationId: response.header('CID'),
-            body: {
-              request: {
-                headers: {
-                  host: 'something.incomming.hoi.io'
-                },
-                url: '/invoice/new',
-                method: 'POST',
-                body: 'some text'
+        var eventExpected = new ApplicationEvent({
+          applicationId: 'applicationId',
+          eventName: 'post.invoice',
+          environment: 'live',
+          correlationId: response.header.cid,
+          body: {
+            request: {
+              headers: {
+                host: 'something.incomming.hoi.io',
+                'accept-encoding': 'gzip, deflate',
+                connection: 'close',
+                'content-length': '15',
+                'content-type': 'application/json',
+                'user-agent': 'node-superagent/0.19.0'
               },
-              params: {
-                authenticate: true,
-                event: 'post.invoice',
-                method: 'new'
+              url: '/invoice/new',
+              method: 'POST',
+              body: {
+                key: 'value'
               }
+            },
+            payload: {
+              authenticate: true,
+              event: 'post.invoice',
+              method: 'new',
+              key: 'value'
             }
-          }));
+
+          }
+        });
+        eventExpected.domain = null;
+        expect(EventBroker.publish.firstCall.args[0])
+          .to.eql(eventExpected);
       });
       it('sends a 200 response', function () {
         expect(response.statusCode).to.eql(200);
       });
       it('replies with the CID', function () {
         /*jshint -W030*/
-        expect(response.header('CID')).to.exist;
+        expect(response.header.cid).to.exist;
       });
     });
     describe('with no matching endpoint', function () {
       var response;
-      before(function () {
-        var request = httpMocks.createRequest({
-          headers: {
-            host: 'something.incomming.hoi.io'
-          },
-          url: '/something/else',
-          method: 'POST',
-          body: 'some text'
-        });
-        response = httpMocks.createResponse({});
+      before(function (done) {
+
         sinon.stub(Application, 'findAsync', function () {
           return BBPromise.resolve([new Application({
             _id: 'applicationId',
@@ -146,7 +151,16 @@ describe('server', function () {
           })]);
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
-        server.processRequest(request, response);
+        supertest(server.createServer())
+          .post('/something/else')
+          .set('host', 'something.incomming.hoi.io')
+          .send({
+            key: 'value'
+          })
+          .end(function (err, res) {
+            response = res;
+            done();
+          });
       });
       after(function () {
         EventBroker.publish.restore();
@@ -167,26 +181,26 @@ describe('server', function () {
         expect(parseInt(response.statusCode)).to.eql(404);
       });
       it('should publish a message', function () {
-        expect(response._getData()).to.eql('No Endpoint Found');
+        expect(response.text).to.eql('No Endpoint Found');
       });
     });
     describe('with no matching application', function () {
       var response;
-      before(function () {
-        var request = httpMocks.createRequest({
-          headers: {
-            host: 'something.incomming.hoi.io'
-          },
-          url: '/something/else',
-          method: 'POST',
-          body: 'some text'
-        });
-        response = httpMocks.createResponse({});
+      before(function (done) {
         sinon.stub(Application, 'findAsync', function () {
           return BBPromise.resolve([]);
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
-        server.processRequest(request, response);
+        supertest(server.createServer())
+          .post('/something/else')
+          .set('host', 'something.incomming.hoi.io')
+          .send({
+            key: 'value'
+          })
+          .end(function (err, res) {
+            response = res;
+            done();
+          });
       });
       after(function () {
         EventBroker.publish.restore();
@@ -207,7 +221,7 @@ describe('server', function () {
         expect(parseInt(response.statusCode)).to.eql(404);
       });
       it('should publish a message', function () {
-        expect(response._getData()).to.eql('The specified application could not be found');
+        expect(response.text).to.eql('The specified application could not be found');
       });
     });
   });

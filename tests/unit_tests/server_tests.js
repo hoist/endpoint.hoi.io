@@ -57,7 +57,7 @@ describe('server', function () {
             }
           })]);
         });
-        sinon.stub(EventBroker, 'publish').callsArg(1);
+        sinon.stub(EventBroker, 'publish').returns(BBPromise.resolve(null));
         supertest(server.createServer())
           .post('/domain/dev/invoice/new')
           .send({

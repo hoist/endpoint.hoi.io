@@ -41,13 +41,11 @@ describe('server', function () {
     describe('if endpoint exists', function () {
       var response;
       before(function (done) {
-
-
         sinon.stub(Application, 'findAsync', function () {
           return BBPromise.resolve([new Application({
             _id: 'applicationId',
             settings: {
-              live: {
+              dev: {
                 endpoints: {
                   '/invoice/:method': {
                     methods: ['POST'],
@@ -61,8 +59,7 @@ describe('server', function () {
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
         supertest(server.createServer())
-          .post('/invoice/new')
-          .set('host', 'something.incomming.hoi.io')
+          .post('/domain/dev/invoice/new')
           .send({
             key: 'value'
           })
@@ -80,7 +77,7 @@ describe('server', function () {
       it('looks-up app based on host', function () {
         expect(Application.findAsync)
           .to.have.been.calledWith({
-            subDomain: 'something'
+            subDomain: 'domain'
           });
       });
       it('publishes application event', function () {
@@ -91,12 +88,11 @@ describe('server', function () {
         var eventExpected = new ApplicationEvent({
           applicationId: 'applicationId',
           eventName: 'post.invoice',
-          environment: 'live',
+          environment: 'dev',
           correlationId: response.header.cid,
           body: {
             request: {
               headers: {
-                host: 'something.incomming.hoi.io',
                 'accept-encoding': 'gzip, deflate',
                 connection: 'close',
                 'content-length': '15',
@@ -152,8 +148,7 @@ describe('server', function () {
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
         supertest(server.createServer())
-          .post('/something/else')
-          .set('host', 'something.incomming.hoi.io')
+          .post('/something/something/else')
           .send({
             key: 'value'
           })
@@ -192,8 +187,7 @@ describe('server', function () {
         });
         sinon.stub(EventBroker, 'publish').callsArg(1);
         supertest(server.createServer())
-          .post('/something/else')
-          .set('host', 'something.incomming.hoi.io')
+          .post('/domain/something/else')
           .send({
             key: 'value'
           })
@@ -209,7 +203,7 @@ describe('server', function () {
       it('looks-up app based on host', function () {
         expect(Application.findAsync)
           .to.have.been.calledWith({
-            subDomain: 'something'
+            subDomain: 'domain'
           });
       });
       it('doesn\'t publish application event', function () {

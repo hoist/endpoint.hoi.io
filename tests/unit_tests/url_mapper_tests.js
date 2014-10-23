@@ -3,36 +3,28 @@ var UrlMapper = require('../../lib/url_mapper');
 var expect = require('chai').expect;
 
 describe('UrlMapper', function () {
-  describe('.queryFromHost', function () {
-    it('maps hoist domain to subdomain query', function () {
-      var query = UrlMapper.queryFromHost('MixedCaseName.incomming.hoi.io');
-      expect(query.subDomain).to.eql('mixedcasename');
-    });
-    it('maps non hoist domain to cname query', function () {
-      var query = UrlMapper.queryFromHost('AppName.com');
-      expect(query.alias).to.eql('appname.com');
-    });
-    it('maps environment domain to a subdomain query', function () {
-      var query = UrlMapper.queryFromHost('DEV.MixedCaseName.incomming.hoi.io');
+  describe('.queryFromPath', function () {
+    it('maps firstPart of path to subdomain query', function () {
+      var query = UrlMapper.queryFromPath('/mixedCaseName/dev/some/end/point');
       expect(query.subDomain).to.eql('mixedcasename');
     });
   });
-  describe('.environmentFromHost', function () {
+  describe('.environmentFromPath', function () {
     it('environment subdomains match', function () {
-      expect(UrlMapper.environmentFromHost('Dev.app.com')).to.eql('dev');
-      expect(UrlMapper.environmentFromHost('Live.aPpp.hoi.io')).to.eql('live');
-      expect(UrlMapper.environmentFromHost('test.app.hoi.io')).to.eql('test');
+      expect(UrlMapper.environmentFromPath('/mixedCaseName/Dev/some/end/point')).to.eql('dev');
+      expect(UrlMapper.environmentFromPath('/mixedCaseName/LiVe/some/end/point')).to.eql('live');
+      expect(UrlMapper.environmentFromPath('/mixedCaseName/tesT/some/end/point')).to.eql('test');
     });
     it('should default to live', function () {
-      expect(UrlMapper.environmentFromHost('something.app.hoi.dev')).to.eql('live');
+      expect(UrlMapper.environmentFromPath('/mixedCaseName/some/end/point')).to.eql('live');
     });
   });
   describe('.routeFromPath', function () {
     it('returns null if no endpoints', function () {
-      expect(UrlMapper.routeFromPath({}, '/status?name=ryan')).to.eql(null);
+      expect(UrlMapper.routeFromPath({}, '/mixedCaseName/status?name=ryan')).to.eql(null);
     });
     it('returns null if null endpoints', function () {
-      expect(UrlMapper.routeFromPath(null, '/status?name=ryan')).to.eql(null);
+      expect(UrlMapper.routeFromPath(null, '/mixedCaseName/status?name=ryan')).to.eql(null);
     });
     it('returns endpoint if direct match', function () {
       expect(UrlMapper.routeFromPath({
@@ -42,7 +34,7 @@ describe('UrlMapper', function () {
           'authenticated': true
         }
       }, {
-        url: '/status?name=ryan',
+        url: '/subDomain/status?name=ryan',
         method: 'GET'
       })).to.eql({
         'event': 'get.invoices',
@@ -57,7 +49,7 @@ describe('UrlMapper', function () {
           'authenticated': true
         }
       }, {
-        url: '/status/ryan',
+        url: '/subDomain/status/ryan',
         method: 'POST'
       })).to.eql({
         'event': 'get.invoices',
@@ -73,9 +65,24 @@ describe('UrlMapper', function () {
           'authenticated': true
         }
       }, {
-        url: '/status/ryan',
+        url: '/subDomain/status/ryan',
         method: 'POST'
       })).to.eql(null);
+    });
+  });
+  describe('.sanitisePath', function () {
+    it('clears subdomain from path',function(){
+      expect(UrlMapper.sanitisePath('/subDomain/some/path').path)
+      .to.eql('/some/path');
+
+    });
+    it('clears environment from path',function(){
+      expect(UrlMapper.sanitisePath('/subDomain/Live/some/path').path)
+      .to.eql('/some/path');
+      expect(UrlMapper.sanitisePath('/subDomain/dev/some/path').path)
+      .to.eql('/some/path');
+      expect(UrlMapper.sanitisePath('/subDomain/tesT/some/path').path)
+      .to.eql('/some/path');
     });
   });
 });

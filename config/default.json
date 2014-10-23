@@ -5,11 +5,6 @@
     },
     "mongo": {
       "db": "mongodb://localhost/hoist-default"
-    },
-    "hoist": {
-      "domains": {
-        "webhooks": ".incomming.hoi.io"
-      }
     }
   }
 }

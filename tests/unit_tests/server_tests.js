@@ -90,8 +90,11 @@ describe('server', function () {
           eventName: 'post.invoice',
           environment: 'dev',
           correlationId: response.header.cid,
-          body: {
-            request: {
+          payload: {
+            _request: {
+              body: {
+                key: 'value'
+                },
               headers: {
                 'accept-encoding': 'gzip, deflate',
                 connection: 'close',
@@ -100,16 +103,7 @@ describe('server', function () {
                 'user-agent': 'node-superagent/0.19.0'
               },
               url: '/invoice/new',
-              method: 'POST',
-              body: {
-                key: 'value'
-              }
-            },
-            payload: {
-              authenticate: true,
-              event: 'post.invoice',
-              method: 'new',
-              key: 'value'
+              method: 'POST'
             }
 
           }

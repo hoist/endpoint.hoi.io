@@ -5,16 +5,14 @@ var server = require('../../lib/server');
 var expect = require('chai').expect;
 var hoistModel = require('hoist-model');
 var Application = hoistModel.Application;
-var mongoose = hoistModel._mongoose;
 var BBPromise = require('bluebird');
 var EventBroker = require('broker/lib/event_broker');
-var ApplicationEvent = require('broker/lib/event_types/application_event');
 var request = require('supertest');
 var jsonPaymentSuccess = require('./paymentSuccessPayloadJson');
-var _ = require('lodash')
+var _ = require('lodash');
 
 
-describe.only('When receiving payment success', function () {
+describe('When receiving payment success', function () {
   var app = server.createServer();
   var _response;
   before(function (done) {
@@ -60,9 +58,10 @@ describe.only('When receiving payment success', function () {
     expect(_response.header).to.include.keys('cid');
   });
 
+
   it('Event broker#publish is called with original event', function(){
     expect(EventBroker.publish).to.have.been.calledWith(sinon.match(function(actualEvent){
-      console.log(actualEvent);
+      // console.log(actualEvent.payload);
       expect(actualEvent.correlationId).to.exist;
       expect(actualEvent.eventName).to.exist;
       expect(actualEvent.payload).to.exist;

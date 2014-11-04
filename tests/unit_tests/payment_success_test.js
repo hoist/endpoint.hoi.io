@@ -11,6 +11,7 @@ var EventBroker = require('broker/lib/event_broker');
 var ApplicationEvent = require('broker/lib/event_types/application_event');
 var request = require('supertest');
 var jsonPaymentSuccess = require('./paymentSuccessPayloadJson');
+var _ = require('lodash')
 
 
 describe.only('When receiving payment success', function () {
@@ -55,7 +56,27 @@ describe.only('When receiving payment success', function () {
     expect(_response.statusCode).to.eql(200);
   });
 
-  it('Event broker#publish is called with ', function(){
-    expect(EventBroker.publish).to.have.been.calledWith({payload:jsonPaymentSuccess});
+  it('the server responds with a cid', function(){
+    expect(_response.header).to.include.keys('cid');
   });
+
+  it('Event broker#publish is called with original event', function(){
+    expect(EventBroker.publish).to.have.been.calledWith(sinon.match(function(actualEvent){
+      console.log(actualEvent);
+      expect(actualEvent.correlationId).to.exist;
+      expect(actualEvent.eventName).to.exist;
+      expect(actualEvent.payload).to.exist;
+      expect(actualEvent.applicationId).to.exist;
+      _.forIn(jsonPaymentSuccess,function(i,key){
+        expect(actualEvent.payload[key]).to.eql(jsonPaymentSuccess[key]);
+      });
+      return true;
+    }));
+
+
+  });
+
+   
+
+   
 });

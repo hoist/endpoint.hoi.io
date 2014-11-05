@@ -58,6 +58,7 @@ describe('When receiving payment success', function () {
   });
 
   it('Event broker#publish is called with original event', function(){
+     /* jshint -W030 */
     expect(EventBroker.publish).to.have.been.calledWith(sinon.match(function(actualEvent){
       expect(actualEvent.correlationId).to.exist;
       expect(actualEvent.eventName).to.exist;

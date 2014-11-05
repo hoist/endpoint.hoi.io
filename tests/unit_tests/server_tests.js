@@ -108,7 +108,7 @@ describe('server', function () {
             key: 'value'
           }
         });
-        eventExpected.domain = null,
+        eventExpected.domain = null;
         expect(EventBroker.publish.firstCall.args[0])
           .to.eql(eventExpected);
       });

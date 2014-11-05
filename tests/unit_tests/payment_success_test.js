@@ -40,7 +40,6 @@ describe('When receiving payment success', function () {
       .post('/test/payment/success')
       .send(jsonPaymentSuccess)
       .end(function(err,response){
-
         _response = response;
         done();
       });
@@ -58,10 +57,8 @@ describe('When receiving payment success', function () {
     expect(_response.header).to.include.keys('cid');
   });
 
-
   it('Event broker#publish is called with original event', function(){
     expect(EventBroker.publish).to.have.been.calledWith(sinon.match(function(actualEvent){
-      // console.log(actualEvent.payload);
       expect(actualEvent.correlationId).to.exist;
       expect(actualEvent.eventName).to.exist;
       expect(actualEvent.payload).to.exist;
@@ -71,11 +68,5 @@ describe('When receiving payment success', function () {
       });
       return true;
     }));
-
-
   });
-
-   
-
-   
 });

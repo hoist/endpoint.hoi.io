@@ -54,7 +54,7 @@ describe('When receiving payment success', function () {
   });
 
   it('the server responds with a cid', function(){
-    expect(_response.header).to.include.keys('cid');
+    expect(_response.header).to.include.keys('x-hoist-cid');
   });
 
   it('Event broker#publish is called with original event', function(){

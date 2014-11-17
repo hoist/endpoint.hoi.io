@@ -89,7 +89,8 @@ describe('server', function () {
           applicationId: 'applicationId',
           eventName: 'post.invoice',
           environment: 'dev',
-          correlationId: response.header.cid,
+          correlationId: response.header['x-hoist-cid'],
+          messageId:response.header['x-hoist-eid'],
           payload: {
             _request: {
               body: {
@@ -117,7 +118,7 @@ describe('server', function () {
       });
       it('replies with the CID', function () {
         /*jshint -W030*/
-        expect(response.header.cid).to.exist;
+        expect(response.header['x-hoist-cid']).to.exist;
       });
     });
     describe('with no matching endpoint', function () {

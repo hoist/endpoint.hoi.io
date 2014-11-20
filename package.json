@@ -33,7 +33,7 @@
   "dependencies": {
     "bluebird": "^2.3.2",
     "body": "^4.5.0",
-    "broker": "git://github.com/hoist/broker",
+    "broker": "git://github.com/hoist/broker#feature/sqs_messaging",
     "config": "^1.2.0",
     "hoist-errors": "git://github.com/hoist/hoist-errors",
     "hoist-logger": "git://github.com/hoist/hoist-logger",

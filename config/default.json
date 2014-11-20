@@ -5,6 +5,14 @@
     },
     "mongo": {
       "db": "mongodb://localhost/hoist-default"
+    },
+    "messageBus":{
+      "type":"sqs"
+    },
+    "aws":{
+      "account":"awsaccount",
+      "secret":"secret",
+      "region":"awsregion"
     }
   }
 }

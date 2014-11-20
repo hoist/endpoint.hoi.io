@@ -8,7 +8,7 @@ var hoistModel = require('hoist-model');
 var Application = hoistModel.Application;
 var mongoose = hoistModel._mongoose;
 var BBPromise = require('bluebird');
-var EventBroker = require('broker/lib/event_broker');
+var EventBroker = require('broker');
 var ApplicationEvent = require('broker/lib/event_types/application_event');
 var supertest = require('supertest');
 describe('server', function () {
@@ -57,7 +57,7 @@ describe('server', function () {
             }
           })]);
         });
-        sinon.stub(EventBroker, 'publish').returns(BBPromise.resolve(null));
+        sinon.stub(EventBroker.prototype, 'send').returns(BBPromise.resolve(null));
         supertest(server.createServer())
           .post('/domain/dev/invoice/new')
           .send({
@@ -71,7 +71,7 @@ describe('server', function () {
 
       });
       after(function () {
-        EventBroker.publish.restore();
+        EventBroker.prototype.send.restore();
         Application.findAsync.restore();
       });
       it('looks-up app based on host', function () {
@@ -81,7 +81,7 @@ describe('server', function () {
           });
       });
       it('publishes application event', function () {
-        expect(EventBroker.publish)
+        expect(EventBroker.prototype.send)
           .to.have.been.calledWith(sinon.match.instanceOf(ApplicationEvent));
       });
       it('publish the correct event', function () {
@@ -110,7 +110,7 @@ describe('server', function () {
           }
         });
         eventExpected.domain = null;
-        expect(EventBroker.publish.firstCall.args[0])
+        expect(EventBroker.prototype.send.firstCall.args[0])
           .to.eql(eventExpected);
       });
       it('sends a 200 response', function () {
@@ -141,7 +141,7 @@ describe('server', function () {
             }
           })]);
         });
-        sinon.stub(EventBroker, 'publish').callsArg(1);
+        sinon.stub(EventBroker.prototype, 'send').callsArg(1);
         supertest(server.createServer())
           .post('/something/something/else')
           .send({
@@ -153,7 +153,7 @@ describe('server', function () {
           });
       });
       after(function () {
-        EventBroker.publish.restore();
+        EventBroker.prototype.send.restore();
         Application.findAsync.restore();
       });
       it('looks-up app based on host', function () {
@@ -164,7 +164,7 @@ describe('server', function () {
       });
       it('doesn\'t publish application event', function () {
         /*jshint -W030*/
-        expect(EventBroker.publish)
+        expect(EventBroker.prototype.send)
           .to.have.not.been.called;
       });
       it('sends a 404 response', function () {
@@ -180,7 +180,7 @@ describe('server', function () {
         sinon.stub(Application, 'findAsync', function () {
           return BBPromise.resolve([]);
         });
-        sinon.stub(EventBroker, 'publish').callsArg(1);
+        sinon.stub(EventBroker.prototype, 'send').callsArg(1);
         supertest(server.createServer())
           .post('/domain/something/else')
           .send({
@@ -192,7 +192,7 @@ describe('server', function () {
           });
       });
       after(function () {
-        EventBroker.publish.restore();
+        EventBroker.prototype.send.restore();
         Application.findAsync.restore();
       });
       it('looks-up app based on host', function () {
@@ -203,7 +203,7 @@ describe('server', function () {
       });
       it('doesn\'t publish application event', function () {
         /*jshint -W030*/
-        expect(EventBroker.publish)
+        expect(EventBroker.prototype.send)
           .to.have.not.been.called;
       });
       it('sends a 404 response', function () {

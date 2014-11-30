@@ -3,10 +3,20 @@ var UrlMapper = require('../../lib/url_mapper');
 var expect = require('chai').expect;
 
 describe('UrlMapper', function () {
-  describe('.queryFromPath', function () {
+  describe('.mongoQueryFromPath', function () {
     it('maps firstPart of path to subdomain query', function () {
-      var query = UrlMapper.queryFromPath('/mixedCaseName/dev/some/end/point');
+      var query = UrlMapper.mongoQueryFromPath('/mixedCaseName/dev/some/end/point');
       expect(query.subDomain).to.eql('mixedcasename');
+    });
+  });
+  describe('.queryFromPath', function () {
+    it('returns queryString of path', function () {
+      var query = UrlMapper.queryFromPath('/mixedCaseName/dev/some/end/point/?somekey=some-value%20here');
+      expect(query).to.eql('somekey=some-value%20here');
+    });
+    it('returns empty string if there is no queryString of path', function () {
+      var query = UrlMapper.queryFromPath('/mixedCaseName/dev/some/end/point');
+      expect(query).to.eql('');
     });
   });
   describe('.environmentFromPath', function () {

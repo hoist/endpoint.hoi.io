@@ -14,9 +14,9 @@ describe('UrlMapper', function () {
       var query = UrlMapper.queryFromPath('/mixedCaseName/dev/some/end/point/?somekey=some-value%20here');
       expect(query).to.eql('somekey=some-value%20here');
     });
-    it('returns nothing if there is no queryString of path', function () {
+    it('returns empty string if there is no queryString of path', function () {
       var query = UrlMapper.queryFromPath('/mixedCaseName/dev/some/end/point');
-      expect(query).to.eql(undefined);
+      expect(query).to.eql('');
     });
   });
   describe('.environmentFromPath', function () {

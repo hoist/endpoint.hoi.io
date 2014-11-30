@@ -8,6 +8,10 @@ describe('UrlMapper', function () {
       var query = UrlMapper.queryFromPath('/mixedCaseName/dev/some/end/point');
       expect(query.subDomain).to.eql('mixedcasename');
     });
+    it('maps queryString of path to path query', function () {
+      var query = UrlMapper.queryFromPath('/mixedCaseName/dev/some/end/point/?somekey=some-value%20here');
+      expect(query.queryString).to.eql('somekey=some-value%20here');
+    });
   });
   describe('.environmentFromPath', function () {
     it('environment subdomains match', function () {

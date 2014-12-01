@@ -91,6 +91,7 @@ describe('server', function () {
           environment: 'dev',
           correlationId: response.header['x-hoist-cid'],
           messageId:response.header['x-hoist-eid'],
+          eventId:response.header['x-hoist-eid'],
           payload: {
             _request: {
               body: {

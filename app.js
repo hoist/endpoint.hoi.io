@@ -1,26 +1,20 @@
 'use strict';
-
+var logger = require('hoist-logger');
 var server = require('./lib/server');
 
 process.on('message', function (msg) {
-  console.log('got message', msg, msg === 'shutdown');
   if (msg === 'shutdown') {
-    console.log('closing connection');
-    // Your process is going to be reloaded
-    // You have to close all database/socket.io/* connections
 
-    console.log('Closing all connections...');
-
-    // You will have 4000ms to close all connections before
-    // the reload mechanism will try to do its job
-    setTimeout(function () {
+    process.nextTick(function () {
       server.stop(function () {
+        logger.info('server shutdown complete');
         process.exit(0);
       });
-    }, 1500);
+    });
+    logger.info('server shutdown initiated');
   }
 });
 
 
 server.start();
-console.log('started');
+logger.info('started');

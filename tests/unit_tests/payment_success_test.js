@@ -5,22 +5,25 @@ var server = require('../../lib/server');
 var expect = require('chai').expect;
 var hoistModel = require('hoist-model');
 var Application = hoistModel.Application;
+var Organisation = hoistModel.Organisation;
 var BBPromise = require('bluebird');
 var EventBroker = require('broker');
-var request = require('supertest');
 var jsonPaymentSuccess = require('./paymentSuccessPayloadJson');
 var _ = require('lodash');
 
 
 describe('When receiving payment success', function () {
-  var app = server.createServer();
+  var app = server.createHapiServer();
   var _response;
   before(function (done) {
     sinon.stub(EventBroker.prototype, 'send', function () {
       return BBPromise.resolve(null);
     });
-    sinon.stub(Application, 'findAsync', function () {
-      return BBPromise.resolve([new Application({
+    sinon.stub(Organisation, 'findOneAsync').returns(BBPromise.resolve(
+      new Organisation()
+    ));
+    sinon.stub(Application, 'findOneAsync', function () {
+      return BBPromise.resolve(new Application({
         _id: 'applicationId',
         subdomain: 'test',
         settings: {
@@ -34,27 +37,29 @@ describe('When receiving payment success', function () {
             }
           }
         }
-      })]);
+      }));
     });
-    request(app)
-      .post('/test/payment/success')
-      .send(jsonPaymentSuccess)
-      .end(function (err, response) {
-        _response = response;
-        done();
-      });
+    app.inject({
+      method: 'POST',
+      payload: jsonPaymentSuccess,
+      url: '/org/app/payment/success'
+    }, function (res) {
+      _response = res;
+      done();
+    });
   });
   after(function () {
-    Application.findAsync.restore();
+    Application.findOneAsync.restore();
+    Organisation.findOneAsync.restore();
     EventBroker.prototype.send.restore();
   });
 
-  it('the server responds with status 200', function () {
-    expect(_response.statusCode).to.eql(200);
+  it('the server responds with status 201', function () {
+    expect(_response.statusCode).to.eql(201);
   });
 
   it('the server responds with a cid', function () {
-    expect(_response.header).to.include.keys('x-hoist-cid');
+    expect(_response.headers).to.include.keys('x-hoist-cid');
   });
 
   it('Event broker#publish is called with original event', function () {

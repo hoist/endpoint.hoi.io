@@ -1,7 +1,7 @@
 'use strict';
 var logger = require('hoist-logger');
 var server = require('./lib/server');
-
+process.title = 'hoist-webhooks-listener';
 process.on('message', function (msg) {
   if (msg === 'shutdown') {
 

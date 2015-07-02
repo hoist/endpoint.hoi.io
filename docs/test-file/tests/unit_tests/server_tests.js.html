@@ -94,12 +94,13 @@ describe(&apos;Server&apos;, function () {
     it(&apos;listens to a port&apos;, function () {
       return expect(Hapi.Server.prototype.connection)
         .to.have.been.calledWith({
-          port: 8080
+          host: &quot;0.0.0.0&quot;,
+          port: 8000
         });
     });
     it(&apos;opens up a mongoose connection&apos;, function () {
       return expect(_mongoose.connect)
-        .to.have.been.calledWith(&apos;mongodb://localhost/hoist-test&apos;);
+        .to.have.been.calledWith(&apos;mongodb://db/hoist-test&apos;);
     });
   });
 });

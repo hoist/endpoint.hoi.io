@@ -427,7 +427,7 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/tests/unit_tests/server_tests.js.html#lineNumber43",
+    "test-file/tests/unit_tests/server_tests.js.html#lineNumber44",
     "Server #start opens up a mongoose connection",
     "test"
   ],

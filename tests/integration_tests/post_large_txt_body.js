@@ -25,7 +25,7 @@ from '@hoist/broker';
 Bluebird.promisifyAll(_mongoose);
 describe('Posting Data', function () {
   before(function (done) {
-    _mongoose.connectAsync(config.get('Hoist.mongo.db'))
+    _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))
       .then(function () {
         return Promise.all([
           new Organisation({

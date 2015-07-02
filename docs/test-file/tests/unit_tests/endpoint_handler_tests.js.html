@@ -83,7 +83,7 @@ describe(&apos;EndpointHandler&apos;, function () {
     describe(&apos;with no matching organisation&apos;, function () {
       var _response;
       before(() =&gt; {
-        return _mongoose.connectAsync(config.get(&apos;Hoist.mongo.db&apos;))
+        return _mongoose.connectAsync(config.get(&apos;Hoist.mongo.core.connectionString&apos;))
           .then(() =&gt; {
             return new Promise((resolve) =&gt; {
                 server._hapi.inject({
@@ -113,7 +113,7 @@ describe(&apos;EndpointHandler&apos;, function () {
             _id: &apos;orgid&apos;
           })
         ));
-        return _mongoose.connectAsync(config.get(&apos;Hoist.mongo.db&apos;))
+        return _mongoose.connectAsync(config.get(&apos;Hoist.mongo.core.connectionString&apos;))
           .then(() =&gt; {
             return new Promise((resolve) =&gt; {
               server._hapi.inject({
@@ -148,7 +148,7 @@ describe(&apos;EndpointHandler&apos;, function () {
 
           })
         ));
-        return _mongoose.connectAsync(config.get(&apos;Hoist.mongo.db&apos;))
+        return _mongoose.connectAsync(config.get(&apos;Hoist.mongo.core.connectionString&apos;))
           .then(() =&gt; {
             return new Promise((resolve) =&gt; {
               server._hapi.inject({
@@ -191,7 +191,7 @@ describe(&apos;EndpointHandler&apos;, function () {
             }
           })
         ));
-        return _mongoose.connectAsync(config.get(&apos;Hoist.mongo.db&apos;))
+        return _mongoose.connectAsync(config.get(&apos;Hoist.mongo.core.connectionString&apos;))
           .then(() =&gt; {
             return new Promise((resolve) =&gt; {
               server._hapi.inject({

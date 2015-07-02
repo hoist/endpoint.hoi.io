@@ -37,12 +37,13 @@ describe('Server', function () {
     it('listens to a port', function () {
       return expect(Hapi.Server.prototype.connection)
         .to.have.been.calledWith({
-          port: 8080
+          host: "0.0.0.0",
+          port: 8000
         });
     });
     it('opens up a mongoose connection', function () {
       return expect(_mongoose.connect)
-        .to.have.been.calledWith('mongodb://localhost/hoist-test');
+        .to.have.been.calledWith('mongodb://db/hoist-test');
     });
   });
 });

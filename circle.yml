@@ -16,6 +16,8 @@ checkout:
 dependencies:
   cache_directories:
     - "~/docker"
+  pre:
+    - echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
   override:
     - mkdir -p ~/docker
     - if [[ -e ~/docker/endpoint.tar ]]; then docker load -i ~/docker/endpoint.tar; fi

@@ -11,6 +11,7 @@ checkout:
     # correspond any more to when the file was last changed. To rectify this,
     # first set everything to a timestamp in the past and then update the
     # timestamp for all git-tracked files based on their last committed change.
+    - echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
     - find . -exec touch -t 201401010000 {} \;
     - for x in $(git ls-tree --full-tree --name-only -r HEAD); do touch -t $(date -d "$(git log -1 --format=%ci "${x}")" +%y%m%d%H%M.%S) "${x}"; done
 dependencies:
@@ -18,8 +19,6 @@ dependencies:
     - "~/docker"
   override:
     - mkdir -p ~/docker
-    - if [[ ! -f ~/docker/.npmrc ]]; then echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > ~/docker/.npmrc; fi
-    - cp ~/docker/.npmrc .
     - if [[ -e ~/docker/endpoint.tar ]]; then docker load -i ~/docker/endpoint.tar; fi
     - docker build -t quay.io/hoist/endpoint:${CIRCLE_BRANCH//feature\//} .
     - docker save "quay.io/hoist/endpoint" > ~/docker/endpoint.tar
@@ -47,7 +46,8 @@ deployment:
     branch: [master,/feature\/.*/]
     owner: hoist
     commands:
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
+      # docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
+      - echo ${DOCKER_CONFIG} > .dockercfg
       - docker push quay.io/hoist/endpoint:${CIRCLE_BRANCH//feature\//}
 notify:
   webhooks:

@@ -46,8 +46,8 @@ deployment:
     branch: [master,/feature\/.*/]
     owner: hoist
     commands:
-      # docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
       - echo ${DOCKER_CONFIG} > .dockercfg
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
       - docker push quay.io/hoist/endpoint:${CIRCLE_BRANCH//feature\//}
 notify:
   webhooks:

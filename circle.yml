@@ -2,7 +2,7 @@ machine:
   services:
     - docker
   node:
-    version: v0.10.35
+    version: iojs-v1.8
 checkout:
   post:
     - git fetch --unshallow 2>/dev/null || true
@@ -16,11 +16,11 @@ checkout:
 dependencies:
   cache_directories:
     - "~/docker"
-  pre:
-    - echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc
   override:
     - mkdir -p ~/docker
     - if [[ -e ~/docker/endpoint.tar ]]; then docker load -i ~/docker/endpoint.tar; fi
+    - if [[ ! -f ~/docker/.npmrc ]]; then echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > .npmrc; fi
+    - cp ~/docker/.npmrc ~/
     - docker build -t quay.io/hoist/endpoint:${CIRCLE_BRANCH//feature\//} .
     - docker save "quay.io/hoist/endpoint" > ~/docker/endpoint.tar
 test:

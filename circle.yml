@@ -19,7 +19,7 @@ dependencies:
   override:
     - mkdir -p ~/docker
     - if [[ ! -f ~/docker/.npmrc ]]; then echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} > ~/docker/.npmrc; fi
-    - cp ~/docker/.npmrc ~/
+    - cp ~/docker/.npmrc .
     - if [[ -e ~/docker/endpoint.tar ]]; then docker load -i ~/docker/endpoint.tar; fi
     - docker build -t quay.io/hoist/endpoint:${CIRCLE_BRANCH//feature\//} .
     - docker save "quay.io/hoist/endpoint" > ~/docker/endpoint.tar

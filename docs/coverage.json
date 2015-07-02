@@ -1,0 +1,23 @@
+{
+  "coverage": "100%",
+  "expectCount": 11,
+  "actualCount": 11,
+  "files": {
+    "lib/endpoint_handler.js": {
+      "expectCount": 3,
+      "actualCount": 3
+    },
+    "lib/router.js": {
+      "expectCount": 3,
+      "actualCount": 3
+    },
+    "lib/server.js": {
+      "expectCount": 4,
+      "actualCount": 4
+    },
+    "lib/url_helpers.js": {
+      "expectCount": 1,
+      "actualCount": 1
+    }
+  }
+}

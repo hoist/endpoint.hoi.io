@@ -1,10 +1,13 @@
 'use strict';
-var logger = require('hoist-logger');
-var server = require('./lib/server');
+require("babel/register");
+var logger = require('@hoist/logger');
+var Server = require('./lib/server');
 process.title = 'hoist-webhooks-listener';
+
+var server = new Server();
+
 process.on('message', function (msg) {
   if (msg === 'shutdown') {
-
     process.nextTick(function () {
       server.stop(function () {
         logger.info('server shutdown complete');

@@ -1,17 +1,24 @@
 'use strict';
-var UrlMapper = require('../../lib/url_mapper');
-var expect = require('chai').expect;
+import {
+  routeFromPath
+}
+from '../../lib/url_helpers';
+import {
+  expect
+}
+from 'chai';
 
-describe('UrlMapper', function () {
-  describe('.routeFromPath', function () {
+describe('url helper functions', function () {
+  /** test {routeFromPath} */
+  describe('routeFromPath', function () {
     it('returns null if no endpoints', function () {
-      expect(UrlMapper.routeFromPath({}, 'POST', '/mixedCaseName/status?name=ryan')).to.eql(null);
+      expect(routeFromPath({}, 'POST', '/mixedCaseName/status?name=ryan')).to.eql(null);
     });
     it('returns null if null endpoints', function () {
-      expect(UrlMapper.routeFromPath(null, 'GET', '/mixedCaseName/status?name=ryan')).to.eql(null);
+      expect(routeFromPath(null, 'GET', '/mixedCaseName/status?name=ryan')).to.eql(null);
     });
     it('returns endpoint if direct match', function () {
-      expect(UrlMapper.routeFromPath({
+      expect(routeFromPath({
         '/status': {
           'methods': ['GET'],
           'event': 'get.invoices',
@@ -23,7 +30,7 @@ describe('UrlMapper', function () {
       });
     });
     it('returns endpoint if parametered match', function () {
-      expect(UrlMapper.routeFromPath({
+      expect(routeFromPath({
         '/status/:name': {
           'methods': ['GET', 'POST'],
           'event': 'get.invoices',
@@ -36,7 +43,7 @@ describe('UrlMapper', function () {
       });
     });
     it('returns null if methods dont match', function () {
-      expect(UrlMapper.routeFromPath({
+      expect(routeFromPath({
         '/status/:name': {
           'methods': ['GET'],
           'event': 'get.invoices',

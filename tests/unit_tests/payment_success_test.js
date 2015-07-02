@@ -1,29 +1,38 @@
 'use strict';
-require('../bootstrap.js');
-var sinon = require('sinon');
-var server = require('../../lib/server');
-var expect = require('chai').expect;
-var hoistModel = require('hoist-model');
-var Application = hoistModel.Application;
-var Organisation = hoistModel.Organisation;
-var BBPromise = require('bluebird');
-var EventBroker = require('broker');
-var jsonPaymentSuccess = require('./paymentSuccessPayloadJson');
-var _ = require('lodash');
+import sinon from 'sinon';
+import Server from '../../lib/server';
+import {
+  expect
+}
+from 'chai';
+import {
+  Organisation, Application
+}
+from '@hoist/model';
+import {
+  Publisher
+}
+from '@hoist/broker';
+import jsonPaymentSuccess from './paymentSuccessPayloadJson';
+import {
+  forIn
+}
+from 'lodash';
 
 
 describe('When receiving payment success', function () {
-  var app = server.createHapiServer();
-  var _response;
+  let _response;
   before(function (done) {
-    sinon.stub(EventBroker.prototype, 'send', function () {
-      return BBPromise.resolve(null);
+    let server = new Server();
+    server._createHapiServer();
+    sinon.stub(Publisher.prototype, 'publish', function () {
+      return Promise.resolve(null);
     });
-    sinon.stub(Organisation, 'findOneAsync').returns(BBPromise.resolve(
+    sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(
       new Organisation()
     ));
     sinon.stub(Application, 'findOneAsync', function () {
-      return BBPromise.resolve(new Application({
+      return Promise.resolve(new Application({
         _id: 'applicationId',
         subdomain: 'test',
         settings: {
@@ -39,7 +48,7 @@ describe('When receiving payment success', function () {
         }
       }));
     });
-    app.inject({
+    server._hapi.inject({
       method: 'POST',
       payload: jsonPaymentSuccess,
       url: '/org/app/payment/success'
@@ -51,7 +60,7 @@ describe('When receiving payment success', function () {
   after(function () {
     Application.findOneAsync.restore();
     Organisation.findOneAsync.restore();
-    EventBroker.prototype.send.restore();
+    Publisher.prototype.publish.restore();
   });
 
   it('the server responds with status 201', function () {
@@ -63,16 +72,14 @@ describe('When receiving payment success', function () {
   });
 
   it('Event broker#publish is called with original event', function () {
-    /* jshint -W030 */
-    expect(EventBroker.prototype.send).to.have.been.calledWith(sinon.match(function (actualEvent) {
-      expect(actualEvent.correlationId).to.exist;
-      expect(actualEvent.eventName).to.exist;
-      expect(actualEvent.payload).to.exist;
-      expect(actualEvent.applicationId).to.exist;
-      _.forIn(jsonPaymentSuccess, function (i, key) {
-        expect(actualEvent.payload[key]).to.eql(jsonPaymentSuccess[key]);
+    expect(Publisher.prototype.publish).to.have.been.calledWith(sinon.match(function (actualEvent) {
+      forIn(jsonPaymentSuccess, function (i, key) {
+        return expect(actualEvent.payload[key]).to.eql(jsonPaymentSuccess[key]);
       });
-      return true;
+      return expect(actualEvent.correlationId).to.exist &&
+        expect(actualEvent.eventName).to.exist &&
+        expect(actualEvent.payload).to.exist &&
+        expect(actualEvent.applicationId).to.exist;
     }));
   });
 });

@@ -1,28 +1,39 @@
 'use strict';
-var server = require('../../lib/server');
+import Server from '../../lib/server';
+import config from 'config';
+import {
+  expect
+}
+from 'chai';
+import sinon from 'sinon';
+import Bluebird from 'bluebird';
+import fs from 'fs';
+import path from 'path';
+import {
+  _mongoose,
+  Organisation,
+  Application
+}
+from '@hoist/model';
+import FormData from 'form-data';
+import streamToPromise from 'stream-to-promise';
+import {
+  Publisher
+}
+from '@hoist/broker';
 
-var config = require('config');
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var BBPromise = require('bluebird');
-var mongoose = BBPromise.promisifyAll(require('hoist-model')._mongoose);
-var EventBroker = require('broker');
-var fs = require('fs');
-var path = require('path');
-var Model = require('hoist-model');
-var FormData = require('form-data');
-var streamToPromise = require('stream-to-promise');
+Bluebird.promisifyAll(_mongoose);
 describe('Posting Data', function () {
   before(function (done) {
-    mongoose.connectAsync(config.get('Hoist.mongo.db'))
+    _mongoose.connectAsync(config.get('Hoist.mongo.db'))
       .then(function () {
-        return BBPromise.all([
-          new Model.Organisation({
+        return Promise.all([
+          new Organisation({
             _id: 'orgid',
             name: 'test organisation',
             slug: 'organisation'
           }).saveAsync(),
-          new Model.Application({
+          new Application({
             _id: 'appid',
             name: 'test application',
             slug: 'application',
@@ -42,32 +53,34 @@ describe('Posting Data', function () {
         ]);
       }).nodeify(done);
   });
-  after(function (done) {
-    BBPromise.all([
-        Model.Organisation.removeAsync({}),
-        Model.Application.removeAsync({})
+  after(function () {
+    return Promise.all([
+        Organisation.removeAsync({}),
+        Application.removeAsync({})
       ])
       .then(function () {
-        return mongoose.disconnectAsync();
-      }).nodeify(done);
+        return _mongoose.disconnectAsync();
+      });
   });
   describe('text/xml', function () {
     var _response;
     var _brokerEvent;
     before(function (done) {
-      sinon.stub(EventBroker.prototype, 'send', function (brokerEvent) {
-        _brokerEvent = brokerEvent;
-        return BBPromise.resolve(brokerEvent);
+      sinon.stub(Publisher.prototype, 'publish', function (event) {
+        _brokerEvent = event;
+
+        return Promise.resolve(event);
       });
-      var s = server.createHapiServer();
-      s.inject({
+      var server = new Server();
+      server._createHapiServer();
+      server._hapi.inject({
         method: 'POST',
         url: '/organisation/application/endpoint/for/data',
         payload: fs.readFileSync(path.resolve(__dirname, '../fixtures/large_xml.xml')),
         headers: {
           'Content-Type': 'text/xml',
           'user-agent': "hoist-unit-test"
-        },
+        }
       }, function (res) {
         //console.log(res);
         _response = res;
@@ -75,7 +88,7 @@ describe('Posting Data', function () {
       });
     });
     after(function () {
-      EventBroker.prototype.send.restore();
+      Publisher.prototype.publish.restore();
     });
     it('responds with 201', function () {
       expect(_response.statusCode).to.eql(201);
@@ -86,6 +99,7 @@ describe('Posting Data', function () {
           body: fs.readFileSync(path.resolve(__dirname, '../fixtures/large_xml.xml')).toString(),
           headers: {
             'content-type': "text/xml",
+            'content-length': "1065876",
             'user-agent': "hoist-unit-test"
           },
           url: '/endpoint/for/data',
@@ -110,12 +124,13 @@ describe('Posting Data', function () {
     var _response;
     var _brokerEvent;
     before(function (done) {
-      sinon.stub(EventBroker.prototype, 'send', function (brokerEvent) {
+      sinon.stub(Publisher.prototype, 'publish', function (brokerEvent) {
         _brokerEvent = brokerEvent;
-        return BBPromise.resolve(brokerEvent);
+        return Promise.resolve(brokerEvent);
       });
-      var s = server.createHapiServer();
-      s.inject({
+      var server = new Server();
+      server._createHapiServer();
+      server._hapi.inject({
         method: 'POST',
         url: '/organisation/application/endpoint/for/data',
         payload: {
@@ -124,7 +139,7 @@ describe('Posting Data', function () {
         headers: {
           'Content-Type': 'application/json',
           'user-agent': "hoist-unit-test"
-        },
+        }
       }, function (res) {
         //console.log(res);
         _response = res;
@@ -132,7 +147,7 @@ describe('Posting Data', function () {
       });
     });
     after(function () {
-      EventBroker.prototype.send.restore();
+      Publisher.prototype.publish.restore();
     });
     it('responds with 201', function () {
       expect(_response.statusCode).to.eql(201);
@@ -146,6 +161,7 @@ describe('Posting Data', function () {
           },
           headers: {
             'content-type': "application/json",
+            'content-length': "19",
             'user-agent': "hoist-unit-test"
           },
           url: '/endpoint/for/data',
@@ -173,15 +189,17 @@ describe('Posting Data', function () {
     before(function (done) {
       var form = new FormData();
       form.append('my_field', 'my_value');
-      sinon.stub(EventBroker.prototype, 'send', function (brokerEvent) {
+      sinon.stub(Publisher.prototype, 'publish', function (brokerEvent) {
         _brokerEvent = brokerEvent;
-        return BBPromise.resolve(brokerEvent);
+        return Promise.resolve(brokerEvent);
       });
-      var s = server.createHapiServer();
+      var server = new Server();
+      server._createHapiServer();
       headers = form.getHeaders();
       headers['user-agent'] = "hoist-unit-test";
+      headers['content-length'] = "169";
       streamToPromise(form).then(function (payload) {
-        s.inject({
+        server._hapi.inject({
           method: 'POST',
           url: '/organisation/application/endpoint/for/data',
           payload: payload,
@@ -193,7 +211,7 @@ describe('Posting Data', function () {
       });
     });
     after(function () {
-      EventBroker.prototype.send.restore();
+      Publisher.prototype.publish.restore();
 
     });
     it('responds with 201', function () {

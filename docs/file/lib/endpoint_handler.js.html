@@ -182,7 +182,7 @@ class EndpointHandler {
             EventMetric.updateAsync({
               application: event.applicationId,
               environment: &apos;live&apos;,
-              moduleName: event.eventName,
+              eventName: event.eventName,
               timestampHour: raisedDate.utc().startOf(&apos;hour&apos;).toDate()
             }, update, {
               upsert: true

@@ -9,7 +9,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport errors from '@hoist/errors';\nimport logger from '@hoist/logger';\nimport Boom from 'boom';\nimport {\n  routeFromPath\n}\nfrom './url_helpers';\nimport {\n  Publisher\n}\nfrom '@hoist/broker';\nimport {\n  Organisation,\n  Application,\n  Event\n}\nfrom '@hoist/model';\nimport {\n  clone,\n  isObject,\n  extend\n}\nfrom 'lodash';\nimport uuid from 'uuid';\n\n/**\n * class to handle incoming requests\n */\n\nclass EndpointHandler {\n  /**\n   * create new handler\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n\n  /**\n   * handle incoming requests and turn them into events\n   * @returns {Promise}\n   */\n  onRequest(req, reply) {\n    this._logger.info('got a webhook request');\n    return Organisation.findOneAsync({\n        slug: req.params.orgSlug\n      }).then((organisation) => {\n        if (!organisation) {\n          throw new errors.model.NotFoundError();\n        }\n        return Application.findOneAsync({\n          slug: req.params.appSlug,\n          organisation: organisation._id\n        });\n      }).then((application) => {\n        if (!application) {\n          throw new errors.model.NotFoundError();\n        }\n        if ((!application.settings.live) || (!application.settings.live.endpoints)) {\n          throw new errors.Http404Error('No Endpoint Found');\n        }\n        this._logger.info('found org and app');\n        req.params.endpoint = '/' + req.params.endpoint;\n        return Promise.resolve(routeFromPath(application.settings.live.endpoints, req.method, req.params.endpoint))\n          .then((route) => {\n            if (!route) {\n              throw new errors.Http404Error('No Endpoint Found');\n            }\n            this._logger.info('got an endpoint');\n            var payload = clone(route, true);\n            delete payload.event;\n            delete payload.method;\n            delete payload.authenticate;\n            if (req.method.toLowerCase() === 'post') {\n              if (isObject(req.payload)) {\n                payload = extend(payload, req.payload);\n              }\n            }\n\n            payload._request = {\n              body: req.payload,\n              headers: req.headers,\n              url: req.params.endpoint,\n              method: req.method\n            };\n\n            var queryString = req.url.search;\n\n            if (queryString) {\n              payload._request.queryString = queryString;\n              payload._request.query = req.url.query;\n            }\n\n            delete payload._request.headers.host;\n            this._logger.info('building event');\n            var ev = new Event({\n              eventId: uuid.v4().split('-').join(''),\n              applicationId: application._id,\n              eventName: route.event,\n              environment: 'live',\n              correlationId: require('uuid').v4(),\n              payload: payload\n            });\n            return ev;\n          });\n      })\n      .then((event) => {\n        this._logger.info({\n          event: event\n        }, 'sending event to broker');\n\n        return this._publisher.publish(event)\n          .then(() => {\n            return event;\n          });\n      })\n      .then((event) => {\n        this._logger.info('sending reply');\n        var response = reply(event.toObject());\n        response.header('x-hoist-cid', event.correlationId);\n        response.header('x-hoist-eid', event.eventId);\n        response.statusCode = 201;\n      }).catch((err) => {\n        this._logger.error(err);\n        if (!errors.isHoistError(err)) {\n          console.log(err);\n          this._logger.alert(err);\n          err = new errors.HoistError();\n        }\n        this._logger.info('sending error reply');\n        reply(Boom.wrap(err, parseInt(err.code)));\n      });\n  }\n}\n\n\nexport default EndpointHandler;\n"
+    "content": "'use strict';\nimport errors from '@hoist/errors';\nimport logger from '@hoist/logger';\nimport Boom from 'boom';\nimport Moment from 'moment';\nimport {\n  routeFromPath\n}\nfrom './url_helpers';\nimport {\n  Publisher\n}\nfrom '@hoist/broker';\nimport {\n  Organisation,\n  Application,\n  EventMetric,\n  Event\n}\nfrom '@hoist/model';\nimport {\n  clone,\n  isObject,\n  extend\n}\nfrom 'lodash';\nimport uuid from 'uuid';\n\n/**\n * class to handle incoming requests\n */\n\nclass EndpointHandler {\n  /**\n   * create new handler\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n\n  /**\n   * handle incoming requests and turn them into events\n   * @returns {Promise}\n   */\n  onRequest(req, reply) {\n    this._logger.info('got a webhook request');\n    return Organisation.findOneAsync({\n        slug: req.params.orgSlug\n      }).then((organisation) => {\n        if (!organisation) {\n          throw new errors.model.NotFoundError();\n        }\n        return Application.findOneAsync({\n          slug: req.params.appSlug,\n          organisation: organisation._id\n        });\n      }).then((application) => {\n        if (!application) {\n          throw new errors.model.NotFoundError();\n        }\n        if ((!application.settings.live) || (!application.settings.live.endpoints)) {\n          throw new errors.Http404Error('No Endpoint Found');\n        }\n        this._logger.info('found org and app');\n        req.params.endpoint = '/' + req.params.endpoint;\n        return Promise.resolve(routeFromPath(application.settings.live.endpoints, req.method, req.params.endpoint))\n          .then((route) => {\n            if (!route) {\n              throw new errors.Http404Error('No Endpoint Found');\n            }\n            this._logger.info('got an endpoint');\n            var payload = clone(route, true);\n            delete payload.event;\n            delete payload.method;\n            delete payload.authenticate;\n            if (req.method.toLowerCase() === 'post') {\n              if (isObject(req.payload)) {\n                payload = extend(payload, req.payload);\n              }\n            }\n\n            payload._request = {\n              body: req.payload,\n              headers: req.headers,\n              url: req.params.endpoint,\n              method: req.method\n            };\n\n            var queryString = req.url.search;\n\n            if (queryString) {\n              payload._request.queryString = queryString;\n              payload._request.query = req.url.query;\n            }\n\n            delete payload._request.headers.host;\n            this._logger.info('building event');\n            var ev = new Event({\n              eventId: uuid.v4().split('-').join(''),\n              applicationId: application._id,\n              eventName: route.event,\n              environment: 'live',\n              correlationId: require('uuid').v4(),\n              payload: payload\n            });\n            return ev;\n          });\n      })\n      .then((event) => {\n        this._logger.info({\n          event: event\n        }, 'sending event to broker');\n\n        return this._publisher.publish(event)\n          .then(() => {\n            var raisedDate = new Moment();\n            var update = {\n              $inc: {}\n            };\n            update.$inc.totalRaised = 1;\n            update.$inc['raised.' + raisedDate.utc().minutes()] = 1;\n            EventMetric.updateAsync({\n              application: event.applicationId,\n              environment: 'live',\n              moduleName: event.eventName,\n              timestampHour: raisedDate.utc().startOf('hour').toDate()\n            }, update, {\n              upsert: true\n            }).catch(function (err) {\n              this._logger.alert(err);\n              this._logger.error(err);\n            });\n            return event;\n          });\n      })\n      .then((event) => {\n        this._logger.info('sending reply');\n        var response = reply(event.toObject());\n        response.header('x-hoist-cid', event.correlationId);\n        response.header('x-hoist-eid', event.eventId);\n        response.statusCode = 201;\n      }).catch((err) => {\n        this._logger.error(err);\n        if (!errors.isHoistError(err)) {\n          console.log(err);\n          this._logger.alert(err);\n          err = new errors.HoistError();\n        }\n        this._logger.info('sending error reply');\n        reply(Boom.wrap(err, parseInt(err.code)));\n      });\n  }\n}\n\n\nexport default EndpointHandler;\n"
   },
   {
     "kind": "class",
@@ -23,7 +23,7 @@
     "importPath": "@hoist/endpoint.hoi.io/lib/endpoint_handler.js",
     "importStyle": "EndpointHandler",
     "description": "class to handle incoming requests",
-    "lineNumber": 31,
+    "lineNumber": 33,
     "interface": false
   },
   {
@@ -35,7 +35,7 @@
     "longname": "lib/endpoint_handler.js~EndpointHandler#constructor",
     "access": null,
     "description": "create new handler",
-    "lineNumber": 35,
+    "lineNumber": 37,
     "params": [],
     "generator": false
   },
@@ -48,7 +48,7 @@
     "longname": "lib/endpoint_handler.js~EndpointHandler#_logger",
     "access": null,
     "description": null,
-    "lineNumber": 36,
+    "lineNumber": 38,
     "undocument": true,
     "type": {
       "types": [
@@ -65,7 +65,7 @@
     "longname": "lib/endpoint_handler.js~EndpointHandler#_publisher",
     "access": null,
     "description": null,
-    "lineNumber": 39,
+    "lineNumber": 41,
     "undocument": true,
     "type": {
       "types": [
@@ -82,7 +82,7 @@
     "longname": "lib/endpoint_handler.js~EndpointHandler#onRequest",
     "access": null,
     "description": "handle incoming requests and turn them into events",
-    "lineNumber": 46,
+    "lineNumber": 48,
     "unknown": [
       {
         "tagName": "@returns",

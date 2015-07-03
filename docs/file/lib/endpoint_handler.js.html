@@ -59,6 +59,7 @@
 import errors from &apos;@hoist/errors&apos;;
 import logger from &apos;@hoist/logger&apos;;
 import Boom from &apos;boom&apos;;
+import Moment from &apos;moment&apos;;
 import {
   routeFromPath
 }
@@ -70,6 +71,7 @@ from &apos;@hoist/broker&apos;;
 import {
   Organisation,
   Application,
+  EventMetric,
   Event
 }
 from &apos;@hoist/model&apos;;
@@ -171,6 +173,23 @@ class EndpointHandler {
 
         return this._publisher.publish(event)
           .then(() =&gt; {
+            var raisedDate = new Moment();
+            var update = {
+              $inc: {}
+            };
+            update.$inc.totalRaised = 1;
+            update.$inc[&apos;raised.&apos; + raisedDate.utc().minutes()] = 1;
+            EventMetric.updateAsync({
+              application: event.applicationId,
+              environment: &apos;live&apos;,
+              moduleName: event.eventName,
+              timestampHour: raisedDate.utc().startOf(&apos;hour&apos;).toDate()
+            }, update, {
+              upsert: true
+            }).catch(function (err) {
+              this._logger.alert(err);
+              this._logger.error(err);
+            });
             return event;
           });
       })

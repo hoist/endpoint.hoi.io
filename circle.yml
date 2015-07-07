@@ -32,7 +32,7 @@ test:
     - docker rm endpoint.hoi.io-test; true;
     - docker run -d --name mongodb mongo
     - docker run -d -e RABBITMQ_NODENAME=rabbitmq --name rabbitmq rabbitmq:3-management
-    - docker run -t --link mongodb:db --link rabbitmq:rabbitmq --name endpoint.hoi.io-test --entrypoint gulp quay.io/hoist/endpoint:${CIRCLE_BRANCH//feature\//} test
+    - docker run -t --link mongodb:db --link rabbitmq:rabbitmq --name endpoint.hoi.io-test --entrypoint gulp quay.io/hoist/endpoint.hoi.io:${CIRCLE_BRANCH//feature\//} test
   post:
     - docker cp endpoint.hoi.io-test:/usr/src/app/coverage ~/
 general:

@@ -2222,6 +2222,41 @@
       ]
     },
     {
+      "type": "Identifier",
+      "declaration": {
+        "type": "Identifier",
+        "name": "Router",
+        "range": [
+          976,
+          982
+        ],
+        "loc": {
+          "start": {
+            "line": 49,
+            "column": 15
+          },
+          "end": {
+            "line": 49,
+            "column": 21
+          }
+        }
+      },
+      "range": [
+        961,
+        983
+      ],
+      "loc": {
+        "start": {
+          "line": 49,
+          "column": 0
+        },
+        "end": {
+          "line": 49,
+          "column": 22
+        }
+      }
+    },
+    {
       "type": "ExportDefaultDeclaration",
       "declaration": {
         "type": "ClassDeclaration",
@@ -4240,6 +4275,57 @@
             }
           }
         ],
+        "__esdoc__pseudo_export": false,
+        "trailingComments": []
+      },
+      "range": [
+        961,
+        983
+      ],
+      "loc": {
+        "start": {
+          "line": 49,
+          "column": 0
+        },
+        "end": {
+          "line": 49,
+          "column": 22
+        }
+      },
+      "leadingComments": null
+    },
+    {
+      "type": "ExportDefaultDeclaration",
+      "declaration": {
+        "type": "VariableDeclaration",
+        "kind": "let",
+        "loc": {
+          "start": {
+            "line": 49,
+            "column": 0
+          },
+          "end": {
+            "line": 49,
+            "column": 22
+          }
+        },
+        "declarations": [
+          {
+            "type": "VariableDeclarator",
+            "id": {
+              "type": "Identifier",
+              "name": "router"
+            },
+            "init": {
+              "type": "NewExpression",
+              "callee": {
+                "type": "Identifier",
+                "name": "Router"
+              }
+            }
+          }
+        ],
+        "leadingComments": [],
         "trailingComments": []
       },
       "range": [

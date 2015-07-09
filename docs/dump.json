@@ -114,6 +114,26 @@
     "generator": false
   },
   {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "endpointHandler",
+    "memberof": "lib/endpoint_handler.js",
+    "longname": "lib/endpoint_handler.js~endpointHandler",
+    "access": null,
+    "export": true,
+    "importPath": "@hoist/endpoint.hoi.io/lib/endpoint_handler.js",
+    "importStyle": "endpointHandler",
+    "description": null,
+    "lineNumber": 159,
+    "undocument": true,
+    "type": {
+      "types": [
+        "lib/endpoint_handler.js~EndpointHandler"
+      ]
+    }
+  },
+  {
     "kind": "file",
     "static": true,
     "variation": null,
@@ -206,6 +226,26 @@
       }
     ],
     "generator": false
+  },
+  {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "router",
+    "memberof": "lib/router.js",
+    "longname": "lib/router.js~router",
+    "access": null,
+    "export": true,
+    "importPath": "@hoist/endpoint.hoi.io/lib/router.js",
+    "importStyle": "router",
+    "description": null,
+    "lineNumber": 49,
+    "undocument": true,
+    "type": {
+      "types": [
+        "lib/router.js~Router"
+      ]
+    }
   },
   {
     "kind": "file",
@@ -365,6 +405,26 @@
       "description": ""
     },
     "generator": false
+  },
+  {
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "server",
+    "memberof": "lib/server.js",
+    "longname": "lib/server.js~server",
+    "access": null,
+    "export": true,
+    "importPath": "@hoist/endpoint.hoi.io/lib/server.js",
+    "importStyle": "server",
+    "description": null,
+    "lineNumber": 74,
+    "undocument": true,
+    "type": {
+      "types": [
+        "lib/server.js~Server"
+      ]
+    }
   },
   {
     "kind": "file",

@@ -47,7 +47,7 @@
     "stream-to-promise": "^1.0.4"
   },
   "dependencies": {
-    "@hoist/broker": "^1.0.8",
+    "@hoist/broker": "^1.0.9",
     "@hoist/errors": "^1.0.1",
     "@hoist/logger": "^1.0.0",
     "@hoist/model": "^1.1.0",

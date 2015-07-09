@@ -18,10 +18,28 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "@hoist/endpoint.hoi.io/lib/endpoint_handler.js~endpointhandler",
+    "variable/index.html#static-variable-endpointHandler",
+    "<span>endpointHandler</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/endpoint_handler.js</span>",
+    "variable"
+  ],
+  [
     "@hoist/endpoint.hoi.io/lib/url_helpers.js~routefrompath",
     "function/index.html#static-function-routeFromPath",
     "<span>routeFromPath</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/url_helpers.js</span>",
     "function"
+  ],
+  [
+    "@hoist/endpoint.hoi.io/lib/router.js~router",
+    "variable/index.html#static-variable-router",
+    "<span>router</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/router.js</span>",
+    "variable"
+  ],
+  [
+    "@hoist/endpoint.hoi.io/lib/server.js~server",
+    "variable/index.html#static-variable-server",
+    "<span>server</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/server.js</span>",
+    "variable"
   ],
   [
     "builtinexternal/ecmascriptexternal.js~array",

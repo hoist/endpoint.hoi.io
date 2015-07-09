@@ -12274,6 +12274,41 @@
       ]
     },
     {
+      "type": "Identifier",
+      "declaration": {
+        "type": "Identifier",
+        "name": "EndpointHandler",
+        "range": [
+          4495,
+          4510
+        ],
+        "loc": {
+          "start": {
+            "line": 159,
+            "column": 15
+          },
+          "end": {
+            "line": 159,
+            "column": 30
+          }
+        }
+      },
+      "range": [
+        4480,
+        4511
+      ],
+      "loc": {
+        "start": {
+          "line": 159,
+          "column": 0
+        },
+        "end": {
+          "line": 159,
+          "column": 31
+        }
+      }
+    },
+    {
       "type": "ExportDefaultDeclaration",
       "declaration": {
         "type": "ClassDeclaration",
@@ -23496,6 +23531,57 @@
             }
           }
         ],
+        "__esdoc__pseudo_export": false,
+        "trailingComments": []
+      },
+      "range": [
+        4480,
+        4511
+      ],
+      "loc": {
+        "start": {
+          "line": 159,
+          "column": 0
+        },
+        "end": {
+          "line": 159,
+          "column": 31
+        }
+      },
+      "leadingComments": null
+    },
+    {
+      "type": "ExportDefaultDeclaration",
+      "declaration": {
+        "type": "VariableDeclaration",
+        "kind": "let",
+        "loc": {
+          "start": {
+            "line": 159,
+            "column": 0
+          },
+          "end": {
+            "line": 159,
+            "column": 31
+          }
+        },
+        "declarations": [
+          {
+            "type": "VariableDeclarator",
+            "id": {
+              "type": "Identifier",
+              "name": "endpointHandler"
+            },
+            "init": {
+              "type": "NewExpression",
+              "callee": {
+                "type": "Identifier",
+                "name": "EndpointHandler"
+              }
+            }
+          }
+        ],
+        "leadingComments": [],
         "trailingComments": []
       },
       "range": [

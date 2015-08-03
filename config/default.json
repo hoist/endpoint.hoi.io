@@ -11,6 +11,10 @@
       "url": "amqp://rabbitmq",
       "managementurl": "http://guest:guest@rabbitmq:15672/"
     },
+    "publisher": {
+      "heartbeat": 60,
+      "timeout": 120000
+    },
     "mongo": {
       "core": {
         "connectionString": "mongodb://db/hoist-default"

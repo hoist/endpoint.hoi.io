@@ -1,0 +1,21 @@
+{
+  "Hoist": {
+    "publisher": {
+      "heartbeat": 60,
+      "timeout": 120000
+    },
+    "aws": {
+      "account": "AKIAJN7P3IOULA44GLFA",
+      "secret": "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",
+      "prefix": {
+        "bucket": "dev-"
+      },
+      "region": "us-west-2"
+    },
+    "domains": {
+      "api": "api.hoi.test",
+      "portal": "portal.hoist.test",
+      "bouncer": "bouncer.hoist.test"
+    }
+  }
+}

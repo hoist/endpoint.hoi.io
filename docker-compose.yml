@@ -4,7 +4,7 @@ web:
     - hoist_db_1:db
     - hoist_rabbitmq_1:rabbitmq
   environment:
-   - NODE_ENV=development
+   - NODE_ENV=docker
   ports:
     - "3002:8000"
   volumes_from:

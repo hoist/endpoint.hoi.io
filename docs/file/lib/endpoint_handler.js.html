@@ -129,10 +129,17 @@ class EndpointHandler {
         if ((!application.settings.live) || (!application.settings.live.endpoints)) {
           throw new errors.Http404Error(&apos;No Endpoint Found&apos;);
         }
-        this._logger.info(&apos;found org and app&apos;);
+        this._logger.info({
+          application: application._id
+        }, &apos;found org and app&apos;);
         req.params.endpoint = &apos;/&apos; + req.params.endpoint;
         return Promise.resolve(routeFromPath(application.settings.live.endpoints, req.method, req.params.endpoint))
           .then((route) =&gt; {
+            this._logger.info({
+              application: application._id,
+              route: route,
+              endpoint: &apos;req.params.endpoint&apos;
+            }, &apos;mapped route&apos;);
             if (!route) {
               throw new errors.Http404Error(&apos;No Endpoint Found&apos;);
             }

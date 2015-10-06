@@ -22,8 +22,8 @@ dependencies:
   override:
     - mkdir -p ~/docker
     - if [[ -e ~/docker/endpoint.hoi.io.tar ]]; then docker load -i ~/docker/endpoint.hoi.io.tar; fi
-    - docker build -t quay.io/hoist/endpoint.hoi.io:${CIRCLE_BRANCH//feature\//} .
-    - docker save "quay.io/hoist/endpoint.hoi.io" > ~/docker/endpoint.hoi.io.tar
+    - docker build -t hoist/endpoint.hoi.io:${CIRCLE_BRANCH//feature\//} .
+    - docker save "hoist/endpoint.hoi.io" > ~/docker/endpoint.hoi.io.tar
 test:
   override:
     - docker kill mongodb; true;
@@ -34,7 +34,7 @@ test:
     - docker rm endpoint.hoi.io-test; true;
     - docker run -d --name mongodb mongo
     - docker run -d -e RABBITMQ_NODENAME=rabbitmq --name rabbitmq rabbitmq:3-management
-    - docker run -t --link mongodb:db --link rabbitmq:rabbitmq --name endpoint.hoi.io-test --entrypoint gulp quay.io/hoist/endpoint.hoi.io:${CIRCLE_BRANCH//feature\//} test
+    - docker run -t --link mongodb:db --link rabbitmq:rabbitmq --name endpoint.hoi.io-test --entrypoint gulp hoist/endpoint.hoi.io:${CIRCLE_BRANCH//feature\//} test
   post:
     - docker cp endpoint.hoi.io-test:/usr/src/app/coverage ~/
 general:
@@ -49,8 +49,8 @@ deployment:
     owner: hoist
     commands:
       - echo ${DOCKER_CONFIG} > .dockercfg
-      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS quay.io
-      - docker push quay.io/hoist/endpoint.hoi.io:${CIRCLE_BRANCH//feature\//}
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push hoist/endpoint.hoi.io:${CIRCLE_BRANCH//feature\//}
 notify:
   webhooks:
     - url: https://overlord.hoist.io/api/webhook/circleci?api_token=xc1zrzacmxp9samlj9nya4gzay

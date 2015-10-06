@@ -7,8 +7,8 @@ User=core
 Restart=always
 ExecStartPre=-/usr/bin/docker kill endpoint.hoi.io-%i
 ExecStartPre=-/usr/bin/docker rm endpoint.hoi.io-%i
-ExecStartPre=-/usr/bin/docker pull quay.io/hoist/endpoint.hoi.io:master
-ExecStart=/usr/bin/docker run --name endpoint.hoi.io-%i  -e "SERVICE_TAGS=http,nodejs,endpoint,production,https-hoi-io" -e "SERVICE_NAME=endpoint" -e "NODE_ENV=production" --volumes-from config -P quay.io/hoist/endpoint.hoi.io:master
+ExecStartPre=-/usr/bin/docker pull hoist/endpoint.hoi.io:master
+ExecStart=/usr/bin/docker run --name endpoint.hoi.io-%i  -e "SERVICE_TAGS=http,nodejs,endpoint,production,https-hoi-io" -e "SERVICE_NAME=endpoint" -e "NODE_ENV=production" --volumes-from config -P hoist/endpoint.hoi.io:master
 ExecStop=/usr/bin/docker stop endpoint.hoi.io-%i
 TimeoutStartSec=30m
 

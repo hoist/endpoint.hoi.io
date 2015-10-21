@@ -63,8 +63,8 @@ describe('When receiving payment success', function () {
     Publisher.prototype.publish.restore();
   });
 
-  it('the server responds with status 201', function () {
-    expect(_response.statusCode).to.eql(201);
+  it('the server responds with status 200', function () {
+    expect(_response.statusCode).to.eql(200);
   });
 
   it('the server responds with a cid', function () {

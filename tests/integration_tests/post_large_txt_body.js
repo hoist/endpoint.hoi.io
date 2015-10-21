@@ -90,8 +90,8 @@ describe('Posting Data', function () {
     after(function () {
       Publisher.prototype.publish.restore();
     });
-    it('responds with 201', function () {
-      expect(_response.statusCode).to.eql(201);
+    it('responds with 200', function () {
+      expect(_response.statusCode).to.eql(200);
     });
     it('saves payload on event', function () {
       expect(_brokerEvent.payload).to.eql({
@@ -149,8 +149,8 @@ describe('Posting Data', function () {
     after(function () {
       Publisher.prototype.publish.restore();
     });
-    it('responds with 201', function () {
-      expect(_response.statusCode).to.eql(201);
+    it('responds with 200', function () {
+      expect(_response.statusCode).to.eql(200);
     });
     it('saves payload on event', function () {
       expect(_brokerEvent.payload).to.eql({
@@ -214,8 +214,8 @@ describe('Posting Data', function () {
       Publisher.prototype.publish.restore();
 
     });
-    it('responds with 201', function () {
-      expect(_response.statusCode).to.eql(201);
+    it('responds with 200', function () {
+      expect(_response.statusCode).to.eql(200);
     });
     it('saves payload on event', function () {
       expect(_brokerEvent.payload).to.eql({

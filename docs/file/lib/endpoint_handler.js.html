@@ -213,7 +213,7 @@ class EndpointHandler {
         var response = reply(event.toObject());
         response.header(&apos;x-hoist-cid&apos;, event.correlationId);
         response.header(&apos;x-hoist-eid&apos;, event.eventId);
-        response.statusCode = 201;
+        response.statusCode = 200;
       }).catch((err) =&gt; {
         this._logger.error(err);
         if (!errors.isHoistError(err)) {

@@ -5,6 +5,7 @@ After=config.service
 [Service]
 User=core
 Restart=always
+EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker kill endpoint.hoi.io-%i
 ExecStartPre=-/usr/bin/docker rm endpoint.hoi.io-%i
 ExecStartPre=-/usr/bin/docker pull hoist/endpoint.hoi.io:master

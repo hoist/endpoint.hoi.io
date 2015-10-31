@@ -1,8 +1,16 @@
 {
-  "coverage": "78.57%",
-  "expectCount": 14,
+  "coverage": "40.74%",
+  "expectCount": 27,
   "actualCount": 11,
   "files": {
+    "lib/authorization.js": {
+      "expectCount": 10,
+      "actualCount": 0
+    },
+    "lib/connector_handler.js": {
+      "expectCount": 3,
+      "actualCount": 0
+    },
     "lib/endpoint_handler.js": {
       "expectCount": 4,
       "actualCount": 3

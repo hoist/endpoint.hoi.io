@@ -1,5 +1,17 @@
 window.esdocSearchIndex = [
   [
+    "@hoist/endpoint.hoi.io/lib/authorization.js~authorisation",
+    "class/lib/authorization.js~Authorisation.html",
+    "<span>Authorisation</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/authorization.js</span>",
+    "class"
+  ],
+  [
+    "@hoist/endpoint.hoi.io/lib/connector_handler.js~connectorhandler",
+    "class/lib/connector_handler.js~ConnectorHandler.html",
+    "<span>ConnectorHandler</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/connector_handler.js</span>",
+    "class"
+  ],
+  [
     "@hoist/endpoint.hoi.io/lib/endpoint_handler.js~endpointhandler",
     "class/lib/endpoint_handler.js~EndpointHandler.html",
     "<span>EndpointHandler</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/endpoint_handler.js</span>",
@@ -454,6 +466,84 @@ window.esdocSearchIndex = [
     "test-file/tests/unit_tests/server_tests.js.html#lineNumber33",
     "Server #start starts a hapi server",
     "test"
+  ],
+  [
+    "lib/authorization.js",
+    "file/lib/authorization.js.html",
+    "lib/authorization.js",
+    "file"
+  ],
+  [
+    "lib/authorization.js~authorisation#constructor",
+    "class/lib/authorization.js~Authorisation.html#instance-constructor-constructor",
+    "lib/authorization.js~Authorisation#constructor",
+    "method"
+  ],
+  [
+    "lib/authorization.js~authorisation#delete",
+    "class/lib/authorization.js~Authorisation.html#instance-method-delete",
+    "lib/authorization.js~Authorisation#delete",
+    "method"
+  ],
+  [
+    "lib/authorization.js~authorisation#get",
+    "class/lib/authorization.js~Authorisation.html#instance-method-get",
+    "lib/authorization.js~Authorisation#get",
+    "method"
+  ],
+  [
+    "lib/authorization.js~authorisation#key",
+    "class/lib/authorization.js~Authorisation.html#instance-member-key",
+    "lib/authorization.js~Authorisation#key",
+    "member"
+  ],
+  [
+    "lib/authorization.js~authorisation#payload",
+    "class/lib/authorization.js~Authorisation.html#instance-member-payload",
+    "lib/authorization.js~Authorisation#payload",
+    "member"
+  ],
+  [
+    "lib/authorization.js~authorisation#query",
+    "class/lib/authorization.js~Authorisation.html#instance-member-query",
+    "lib/authorization.js~Authorisation#query",
+    "member"
+  ],
+  [
+    "lib/authorization.js~authorisation#raise",
+    "class/lib/authorization.js~Authorisation.html#instance-method-raise",
+    "lib/authorization.js~Authorisation#raise",
+    "method"
+  ],
+  [
+    "lib/authorization.js~authorisation#set",
+    "class/lib/authorization.js~Authorisation.html#instance-method-set",
+    "lib/authorization.js~Authorisation#set",
+    "method"
+  ],
+  [
+    "lib/authorization.js~authorisation#setdisplayproperty",
+    "class/lib/authorization.js~Authorisation.html#instance-method-setDisplayProperty",
+    "lib/authorization.js~Authorisation#setDisplayProperty",
+    "method"
+  ],
+  [
+    "lib/connector_handler.js",
+    "file/lib/connector_handler.js.html",
+    "lib/connector_handler.js",
+    "file"
+  ],
+  [
+    "lib/connector_handler.js~connectorhandler#constructor",
+    "class/lib/connector_handler.js~ConnectorHandler.html#instance-constructor-constructor",
+    "lib/connector_handler.js~ConnectorHandler#constructor",
+    "method"
+  ],
+  [
+    "lib/connector_handler.js~connectorhandler#onrequest",
+    "class/lib/connector_handler.js~ConnectorHandler.html#instance-method-onRequest",
+    "lib/connector_handler.js~ConnectorHandler#onRequest",
+    "method"
   ],
   [
     "lib/endpoint_handler.js",

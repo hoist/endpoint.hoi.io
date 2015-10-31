@@ -46,7 +46,7 @@ gulp.task('mocha-server', ['eslint', 'clean-coverage'], function (cb) {
           .pipe(plugins.istanbul.writeReports())
           .pipe(plugins.istanbul.enforceThresholds({
             thresholds: {
-              global: 70
+              global: 50
             }
           }))
           .on('end', cb);

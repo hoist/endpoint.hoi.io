@@ -3,6 +3,492 @@
     "kind": "file",
     "static": true,
     "variation": null,
+    "name": "lib/authorization.js",
+    "memberof": null,
+    "longname": "lib/authorization.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "'use strict';\nimport uuid from 'uuid';\nimport {\n  Event\n}\nfrom '@hoist/model';\nimport {\n  filter\n}\nfrom 'lodash';\nexport default class Authorisation {\n  constructor(request, reply, bouncerToken, publisher) {\n    this._request = request;\n    this._reply = reply;\n    this._bouncerToken = bouncerToken;\n    this.query = request.query;\n    this.payload = request.payload;\n    this.key = bouncerToken.key;\n    this._publisher = publisher;\n  }\n  set(key, value, callback) {\n    this._bouncerToken.state[key] = value;\n    this._bouncerToken.markModified('state');\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  setDisplayProperty(name, value, callback) {\n    var existingProperty = filter(this._bouncerToken.displayProperties, (prop) => {\n      return prop.name.toLowerCase() === name.toLowerCase();\n    });\n    if (existingProperty.length !== 0) {\n      existingProperty[0].value = value;\n    } else {\n      this._bouncerToken.displayProperties.push({\n        name: name,\n        value: value\n      });\n    }\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  get(key) {\n    return this._bouncerToken.state[key];\n  }\n  delete(key, callback) {\n    delete this._bouncerToken.state[key];\n    this._bouncerToken.markModified('state');\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  raise(name, payload) {\n    let event = new Event({\n      eventId: uuid.v4().split('-').join(''),\n      applicationId: this._bouncerToken.application,\n      eventName: name,\n      environment: 'live',\n      correlationId: require('uuid').v4(),\n      payload: payload\n    });\n    return this._publisher.publish(event);\n  }\n}\n"
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "Authorisation",
+    "memberof": "lib/authorization.js",
+    "longname": "lib/authorization.js~Authorisation",
+    "access": null,
+    "export": true,
+    "importPath": "@hoist/endpoint.hoi.io/lib/authorization.js",
+    "importStyle": "Authorisation",
+    "description": null,
+    "lineNumber": 11,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "reply",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "bouncerToken",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "publisher",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_request",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#_request",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_reply",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#_reply",
+    "access": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_bouncerToken",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#_bouncerToken",
+    "access": null,
+    "description": null,
+    "lineNumber": 15,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "query",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#query",
+    "access": null,
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "payload",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#payload",
+    "access": null,
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "key",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#key",
+    "access": null,
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_publisher",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#_publisher",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "set",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#set",
+    "access": null,
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "params": [
+      {
+        "name": "key",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "value",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "callback",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "setDisplayProperty",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#setDisplayProperty",
+    "access": null,
+    "description": null,
+    "lineNumber": 28,
+    "undocument": true,
+    "params": [
+      {
+        "name": "name",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "value",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "callback",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "get",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#get",
+    "access": null,
+    "description": null,
+    "lineNumber": 44,
+    "undocument": true,
+    "params": [
+      {
+        "name": "key",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "delete",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#delete",
+    "access": null,
+    "description": null,
+    "lineNumber": 47,
+    "undocument": true,
+    "params": [
+      {
+        "name": "key",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "callback",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "raise",
+    "memberof": "lib/authorization.js~Authorisation",
+    "longname": "lib/authorization.js~Authorisation#raise",
+    "access": null,
+    "description": null,
+    "lineNumber": 54,
+    "undocument": true,
+    "params": [
+      {
+        "name": "name",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "payload",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "lib/connector_handler.js",
+    "memberof": null,
+    "longname": "lib/connector_handler.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "'use strict';\nimport logger from '@hoist/logger';\nimport errors from '@hoist/errors';\nimport Authorization from './authorization';\nimport fs from 'fs';\nimport path from 'path';\nimport config from 'config';\nimport {\n  BouncerToken,\n  ConnectorSetting\n}\nfrom '@hoist/model';\nimport {\n  Publisher\n}\nfrom '@hoist/broker';\n\nexport default class ConnectorHandler {\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n  _loadConnector(connectorSettings) {\n    return Promise.resolve()\n      .then(() => {\n        var connectorPath = path.resolve(path.join(config.get('Hoist.filePaths.connectors'), connectorSettings.connectorType, 'current'));\n        /*istanbul ignore if */\n        if (!fs.existsSync(connectorPath)) {\n          throw new errors.connector.InvalidError();\n        }\n\n        var realpath = fs.readlinkSync(connectorPath);\n        logger.info({\n          connectorPath: connectorPath,\n          realpath: realpath\n        }, 'connectorPath');\n        return require(realpath);\n      })\n      .then((Connector) => {\n        connectorSettings.settings._connectorKey = connectorSettings.key;\n        connectorSettings.settings._applicationId = connectorSettings.application;\n        return new Connector(connectorSettings.settings);\n      });\n  }\n  onRequest(request, reply) {\n    this._logger.info('starting connector request');\n    return Promise.resolve()\n      .then(() => {\n        return BouncerToken.findOneAsync({\n          key: request.params.connectorKey\n        });\n      }).then((bouncerToken) => {\n        if (!bouncerToken) {\n          throw new errors.Http404Error('invalid key');\n        }\n        return ConnectorSetting.findOneAsync({\n          application: bouncerToken.application,\n          environment: bouncerToken.environment,\n          key: bouncerToken.connectorKey\n        }).then((connectorSettings) => {\n          if (!connectorSettings) {\n            throw new errors.Http500Error('unable to find connector settings');\n          }\n          return this._loadConnector(connectorSettings);\n        }).then((connector) => {\n          if (!connector) {\n            throw new errors.Http500Error('unable to load connector');\n          }\n          if (!connector.intercept) {\n            return reply({\n              ok: true\n            });\n          }\n          return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))\n            .then(function () {\n              return reply({\n                ok: true\n              });\n            });\n        });\n      }).catch((err) => {\n        this._logger.error(err);\n        reply(err);\n      });\n\n  }\n}\n"
+  },
+  {
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "ConnectorHandler",
+    "memberof": "lib/connector_handler.js",
+    "longname": "lib/connector_handler.js~ConnectorHandler",
+    "access": null,
+    "export": true,
+    "importPath": "@hoist/endpoint.hoi.io/lib/connector_handler.js",
+    "importStyle": "ConnectorHandler",
+    "description": null,
+    "lineNumber": 18,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "lib/connector_handler.js~ConnectorHandler",
+    "longname": "lib/connector_handler.js~ConnectorHandler#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "params": [],
+    "generator": false
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_logger",
+    "memberof": "lib/connector_handler.js~ConnectorHandler",
+    "longname": "lib/connector_handler.js~ConnectorHandler#_logger",
+    "access": null,
+    "description": null,
+    "lineNumber": 20,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_publisher",
+    "memberof": "lib/connector_handler.js~ConnectorHandler",
+    "longname": "lib/connector_handler.js~ConnectorHandler#_publisher",
+    "access": null,
+    "description": null,
+    "lineNumber": 23,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "_loadConnector",
+    "memberof": "lib/connector_handler.js~ConnectorHandler",
+    "longname": "lib/connector_handler.js~ConnectorHandler#_loadConnector",
+    "access": null,
+    "description": null,
+    "lineNumber": 25,
+    "undocument": true,
+    "params": [
+      {
+        "name": "connectorSettings",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "onRequest",
+    "memberof": "lib/connector_handler.js~ConnectorHandler",
+    "longname": "lib/connector_handler.js~ConnectorHandler#onRequest",
+    "access": null,
+    "description": null,
+    "lineNumber": 47,
+    "undocument": true,
+    "params": [
+      {
+        "name": "request",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "reply",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "kind": "file",
+    "static": true,
+    "variation": null,
     "name": "lib/endpoint_handler.js",
     "memberof": null,
     "longname": "lib/endpoint_handler.js",
@@ -143,7 +629,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport EndpointHandler from './endpoint_handler';\nimport logger from '@hoist/logger';\n\n/**\n * maps routes to handlers for this server\n */\n\nclass Router {\n  /**\n   * create a new router\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._endpointHandler = new EndpointHandler();\n  }\n\n  /**\n   * map routes to endpoints on the server\n   */\n  mapRoutes(server) {\n    server.route({\n      path: '/{orgSlug}/{appSlug}/{endpoint*}',\n      handler: this._endpointHandler.onRequest,\n      config: {\n        bind: this._endpointHandler,\n        payload: {\n          parse: true,\n          maxBytes: '2097152',\n          output: 'data'\n        }\n      },\n      method: ['POST']\n    });\n    server.route({\n      path: '/{orgSlug}/{appSlug}/{endpoint*}',\n      handler: this._endpointHandler.onRequest,\n      config: {\n        bind: this._endpointHandler\n      },\n      method: ['GET']\n    });\n  }\n}\n\n\nexport default Router;\n"
+    "content": "'use strict';\nimport EndpointHandler from './endpoint_handler';\nimport logger from '@hoist/logger';\nimport ConnectorHandler from './connector_handler';\n\n/**\n * maps routes to handlers for this server\n */\n\nclass Router {\n  /**\n   * create a new router\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._endpointHandler = new EndpointHandler();\n    this._connectorHandler = new ConnectorHandler();\n  }\n\n  /**\n   * map routes to endpoints on the server\n   */\n  mapRoutes(server) {\n    server.route({\n      path: '/connector/{connectorKey}/{endpoint*}',\n      handler: this._connectorHandler.onRequest,\n      config: {\n        bind: this._connectorHandler,\n        payload: {\n          parse: true,\n          maxBytes: '2097152',\n          output: 'data'\n        }\n      },\n      method: ['*']\n    });\n    server.route({\n      path: '/{orgSlug}/{appSlug}/{endpoint*}',\n      handler: this._endpointHandler.onRequest,\n      config: {\n        bind: this._endpointHandler,\n        payload: {\n          parse: true,\n          maxBytes: '2097152',\n          output: 'data'\n        }\n      },\n      method: ['*']\n    });\n  }\n}\n\n\nexport default Router;\n"
   },
   {
     "kind": "class",
@@ -157,7 +643,7 @@
     "importPath": "@hoist/endpoint.hoi.io/lib/router.js",
     "importStyle": "Router",
     "description": "maps routes to handlers for this server",
-    "lineNumber": 9,
+    "lineNumber": 10,
     "interface": false
   },
   {
@@ -169,7 +655,7 @@
     "longname": "lib/router.js~Router#constructor",
     "access": null,
     "description": "create a new router",
-    "lineNumber": 13,
+    "lineNumber": 14,
     "params": [],
     "generator": false
   },
@@ -182,7 +668,7 @@
     "longname": "lib/router.js~Router#_logger",
     "access": null,
     "description": null,
-    "lineNumber": 14,
+    "lineNumber": 15,
     "undocument": true,
     "type": {
       "types": [
@@ -199,7 +685,24 @@
     "longname": "lib/router.js~Router#_endpointHandler",
     "access": null,
     "description": null,
-    "lineNumber": 17,
+    "lineNumber": 18,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_connectorHandler",
+    "memberof": "lib/router.js~Router",
+    "longname": "lib/router.js~Router#_connectorHandler",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
     "undocument": true,
     "type": {
       "types": [
@@ -216,7 +719,7 @@
     "longname": "lib/router.js~Router#mapRoutes",
     "access": null,
     "description": "map routes to endpoints on the server",
-    "lineNumber": 23,
+    "lineNumber": 25,
     "params": [
       {
         "name": "server",
@@ -239,7 +742,7 @@
     "importPath": "@hoist/endpoint.hoi.io/lib/router.js",
     "importStyle": "router",
     "description": null,
-    "lineNumber": 49,
+    "lineNumber": 56,
     "undocument": true,
     "type": {
       "types": [

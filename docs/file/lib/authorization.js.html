@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl" href="../../../">
-  <title data-ice="title">tests/unit_tests/server_tests.js | API Document</title>
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">lib/authorization.js | API Document</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -64,56 +64,72 @@
 
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">tests/unit_tests/server_tests.js</h1>
+<div class="content" data-ice="content"><h1 data-ice="title">lib/authorization.js</h1>
 <pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
-import Hapi from &apos;hapi&apos;;
-import sinon from &apos;sinon&apos;;
-import Server from &apos;../../lib/server&apos;;
+import uuid from &apos;uuid&apos;;
 import {
-  expect
-}
-from &apos;chai&apos;;
-import {
-  _mongoose
+  Event
 }
 from &apos;@hoist/model&apos;;
-
-/** @test {Server} */
-describe(&apos;Server&apos;, function () {
-  let server;
-  before(() =&gt; {
-    server = new Server();
-  });
-  /** @test {Server#start} */
-  describe(&apos;#start&apos;, function () {
-    before(() =&gt; {
-      sinon.stub(Hapi.Server.prototype, &apos;start&apos;).callsArg(0);
-      sinon.spy(Hapi.Server.prototype, &apos;connection&apos;);
-      sinon.stub(_mongoose, &apos;connect&apos;).callsArg(1);
-      server.start();
+import {
+  filter
+}
+from &apos;lodash&apos;;
+export default class Authorisation {
+  constructor(request, reply, bouncerToken, publisher) {
+    this._request = request;
+    this._reply = reply;
+    this._bouncerToken = bouncerToken;
+    this.query = request.query;
+    this.payload = request.payload;
+    this.key = bouncerToken.key;
+    this._publisher = publisher;
+  }
+  set(key, value, callback) {
+    this._bouncerToken.state[key] = value;
+    this._bouncerToken.markModified(&apos;state&apos;);
+    return this._bouncerToken.saveAsync().then(() =&gt; {
+      return this;
+    }).nodeify(callback);
+  }
+  setDisplayProperty(name, value, callback) {
+    var existingProperty = filter(this._bouncerToken.displayProperties, (prop) =&gt; {
+      return prop.name.toLowerCase() === name.toLowerCase();
     });
-    after(function () {
-      Hapi.Server.prototype.start.restore();
-      Hapi.Server.prototype.connection.restore();
-      _mongoose.connect.restore();
+    if (existingProperty.length !== 0) {
+      existingProperty[0].value = value;
+    } else {
+      this._bouncerToken.displayProperties.push({
+        name: name,
+        value: value
+      });
+    }
+    return this._bouncerToken.saveAsync().then(() =&gt; {
+      return this;
+    }).nodeify(callback);
+  }
+  get(key) {
+    return this._bouncerToken.state[key];
+  }
+  delete(key, callback) {
+    delete this._bouncerToken.state[key];
+    this._bouncerToken.markModified(&apos;state&apos;);
+    return this._bouncerToken.saveAsync().then(() =&gt; {
+      return this;
+    }).nodeify(callback);
+  }
+  raise(name, payload) {
+    let event = new Event({
+      eventId: uuid.v4().split(&apos;-&apos;).join(&apos;&apos;),
+      applicationId: this._bouncerToken.application,
+      eventName: name,
+      environment: &apos;live&apos;,
+      correlationId: require(&apos;uuid&apos;).v4(),
+      payload: payload
     });
-    it(&apos;starts a hapi server&apos;, function () {
-      return expect(Hapi.Server.prototype.start)
-        .to.have.been.called;
-    });
-    it(&apos;listens to a port&apos;, function () {
-      return expect(Hapi.Server.prototype.connection)
-        .to.have.been.calledWith({
-          host: &quot;0.0.0.0&quot;,
-          port: 8000
-        });
-    });
-    it(&apos;opens up a mongoose connection&apos;, function () {
-      return expect(_mongoose.connect)
-        .to.have.been.calledWith(&apos;mongodb://db/hoist-test&apos;);
-    });
-  });
-});
+    return this._publisher.publish(event);
+  }
+}
 </code></pre>
 </div>
 

@@ -15,20 +15,20 @@ function runMocha(options) {
   options.require = options.require.concat([path.resolve(__dirname, '../../tests/bootstrap.js')]);
   options.reporter = options.reporter || notifierReporter.decorate('spec');
   return gulp.src(globs.specs, {
-      read: false
-    })
+    read: false
+  })
     .pipe(plugins.plumber({
       errorHandler: options.errorHandler || helpers.errorHandler
     }))
     .pipe(plugins.mocha(options));
 }
 
-gulp.task('mocha-server', ['eslint', 'clean-coverage'], function (cb) {
-  require("babel/register");
+gulp.task('mocha-server', ['eslint'], function(cb) {
+  require("babel-register");
   try {
     gulp.src(globs.js.lib)
       .pipe(plugins.plumber({
-        errorHandler: function (err) {
+        errorHandler: function(err) {
           cb(err);
         }
       }))
@@ -36,12 +36,12 @@ gulp.task('mocha-server', ['eslint', 'clean-coverage'], function (cb) {
         instrumenter: isparta.Instrumenter
       }))
       .pipe(plugins.istanbul.hookRequire())
-      .on('finish', function () {
+      .on('finish', function() {
         runMocha({
-            errorHandler: function (err) {
-              cb(err);
-            }
-          })
+          errorHandler: function(err) {
+            cb(err);
+          }
+        })
           .pipe(plugins.plumber.stop())
           .pipe(plugins.istanbul.writeReports())
           .pipe(plugins.istanbul.enforceThresholds({
@@ -55,22 +55,22 @@ gulp.task('mocha-server', ['eslint', 'clean-coverage'], function (cb) {
     cb(err);
   }
 });
-gulp.task('mocha-server-without-coverage', ['eslint'], function () {
-  require("babel/register");
+gulp.task('mocha-server-without-coverage', ['eslint'], function() {
+  require("babel-register");
   return runMocha();
 });
 var withCoverage = false;
-gulp.task('mocha-server-continue', ['eslint', 'clean-coverage'], function (cb) {
-  require("babel/register")();
+gulp.task('mocha-server-continue', ['eslint'], function(cb) {
+  require("babel-register")();
   var ended;
   if (!withCoverage) {
     runMocha({
-      errorHandler: function (err) {
+      errorHandler: function(err) {
         console.log(err, err.stack);
         console.log('emitting end');
         this.emit('end');
       }
-    }).on('end', function () {
+    }).on('end', function() {
       if (!ended) {
         console.log('ending test');
         ended = true;
@@ -86,25 +86,25 @@ gulp.task('mocha-server-continue', ['eslint', 'clean-coverage'], function (cb) {
         instrumenter: isparta.Instrumenter
       }))
       .pipe(plugins.istanbul.hookRequire())
-      .on('finish', function () {
-        require("babel/register")({
+      .on('finish', function() {
+        require("babel-register")({
           optional: ['es7.objectRestSpread']
         });
         //ensure the task finishes after 2 minutes at the most
-        var timeout = setTimeout(function () {
+        var timeout = setTimeout(function() {
           if (!ended) {
             ended = true;
             cb();
           }
         }, 120000);
         runMocha({
-            errorHandler: function () {
-              console.log('emitting end');
-              this.emit('end');
-            }
-          })
+          errorHandler: function() {
+            console.log('emitting end');
+            this.emit('end');
+          }
+        })
           .pipe(plugins.istanbul.writeReports())
-          .on('end', function () {
+          .on('end', function() {
             if (timeout) {
               clearTimeout(timeout);
               timeout = undefined;

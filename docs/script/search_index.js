@@ -30,28 +30,10 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "@hoist/endpoint.hoi.io/lib/endpoint_handler.js~endpointhandler",
-    "variable/index.html#static-variable-endpointHandler",
-    "<span>endpointHandler</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/endpoint_handler.js</span>",
-    "variable"
-  ],
-  [
     "@hoist/endpoint.hoi.io/lib/url_helpers.js~routefrompath",
     "function/index.html#static-function-routeFromPath",
     "<span>routeFromPath</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/url_helpers.js</span>",
     "function"
-  ],
-  [
-    "@hoist/endpoint.hoi.io/lib/router.js~router",
-    "variable/index.html#static-variable-router",
-    "<span>router</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/router.js</span>",
-    "variable"
-  ],
-  [
-    "@hoist/endpoint.hoi.io/lib/server.js~server",
-    "variable/index.html#static-variable-server",
-    "<span>server</span> <span class=\"search-result-import-path\">@hoist/endpoint.hoi.io/lib/server.js</span>",
-    "variable"
   ],
   [
     "builtinexternal/ecmascriptexternal.js~array",
@@ -336,6 +318,12 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
+    "builtinexternal/webapiexternal.js~audiocontext",
+    "external/index.html",
+    "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "external"
+  ],
+  [
     "builtinexternal/webapiexternal.js~canvasrenderingcontext2d",
     "external/index.html",
     "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
@@ -379,91 +367,91 @@ window.esdocSearchIndex = [
   ],
   [
     "endpointhandler#onrequest lib/endpoint_handler.js~endpointhandler#onrequest,endpointhandler#onrequest",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber19",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber11",
     "EndpointHandler",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber25",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber17",
     "EndpointHandler #onRequest",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber116",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber108",
     "EndpointHandler #onRequest with matching endpoints",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber155",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber147",
     "EndpointHandler #onRequest with matching endpoints returns a 404 response",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber81",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber73",
     "EndpointHandler #onRequest with no endpoints",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber112",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber104",
     "EndpointHandler #onRequest with no endpoints returns a 404 response",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber51",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber43",
     "EndpointHandler #onRequest with no matching application",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber77",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber69",
     "EndpointHandler #onRequest with no matching application returns a 404 response",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber26",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber18",
     "EndpointHandler #onRequest with no matching organisation",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber47",
+    "test-file/tests/unit_tests/endpoint_handler_tests.js.html#lineNumber39",
     "EndpointHandler #onRequest with no matching organisation returns a 404 response",
     "test"
   ],
   [
     "server lib/server.js~server,server",
-    "test-file/tests/unit_tests/server_tests.js.html#lineNumber15",
+    "test-file/tests/unit_tests/server_tests.js.html#lineNumber9",
     "Server",
     "test"
   ],
   [
     "server#start lib/server.js~server#start,server#start",
-    "test-file/tests/unit_tests/server_tests.js.html#lineNumber21",
+    "test-file/tests/unit_tests/server_tests.js.html#lineNumber15",
     "Server #start",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/server_tests.js.html#lineNumber37",
+    "test-file/tests/unit_tests/server_tests.js.html#lineNumber31",
     "Server #start listens to a port",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/server_tests.js.html#lineNumber44",
+    "test-file/tests/unit_tests/server_tests.js.html#lineNumber38",
     "Server #start opens up a mongoose connection",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/server_tests.js.html#lineNumber33",
+    "test-file/tests/unit_tests/server_tests.js.html#lineNumber27",
     "Server #start starts a hapi server",
     "test"
   ],
@@ -631,43 +619,43 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber11",
+    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber5",
     "url helper functions",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber13",
+    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber7",
     "url helper functions test {routeFromPath}",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber20",
+    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber14",
     "url helper functions test {routeFromPath} returns endpoint if direct match",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber32",
+    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber26",
     "url helper functions test {routeFromPath} returns endpoint if parametered match",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber45",
+    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber39",
     "url helper functions test {routeFromPath} returns null if methods dont match",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber14",
+    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber8",
     "url helper functions test {routeFromPath} returns null if no endpoints",
     "test"
   ],
   [
     "",
-    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber17",
+    "test-file/tests/unit_tests/url_helpers_tests.js.html#lineNumber11",
     "url helper functions test {routeFromPath} returns null if null endpoints",
     "test"
   ]

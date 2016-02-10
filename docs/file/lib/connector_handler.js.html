@@ -9,12 +9,14 @@
   <script src="script/prettify/prettify.js"></script>
   
   
+  <script src="script/manual.js"></script>
 </head>
-<body class="layout-container">
+<body class="layout-container" data-ice="rootContainer">
 
 <header>
   <a href="./">Home</a>
-  <a href="identifiers.html">Identifier</a>
+  
+  <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   <a href="test.html" data-ice="testLink">Test</a>
   <a data-ice="repoURL" href="https://github.com/hoist/endpoint.hoi.io" class="repo-url-github">Repository</a>
@@ -27,62 +29,31 @@
   </div>
 </header>
 
-<nav class="navigation" data-ice="nav"><div data-ice="classWrap">
-  <h2>Class</h2>
+<nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="classDoc"><span><a href="class/lib/authorization.js~Authorisation.html">Authorisation</a></span></li>
-<li data-ice="classDoc"><span><a href="class/lib/connector_handler.js~ConnectorHandler.html">ConnectorHandler</a></span></li>
-<li data-ice="classDoc"><span><a href="class/lib/endpoint_handler.js~EndpointHandler.html">EndpointHandler</a></span></li>
-<li data-ice="classDoc"><span><a href="class/lib/router.js~Router.html">Router</a></span></li>
-<li data-ice="classDoc"><span><a href="class/lib/server.js~Server.html">Server</a></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/authorization.js~Authorisation.html">Authorisation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/connector_handler.js~ConnectorHandler.html">ConnectorHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/endpoint_handler.js~EndpointHandler.html">EndpointHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/router.js~Router.html">Router</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-routeFromPath">routeFromPath</a></span></span></li>
 </ul>
 </div>
-
-
-
-<div data-ice="functionWrap">
-  <h2><a href="function/">Function</a></h2>
-  <ul>
-    
-  <li data-ice="functionDoc"><span><a href="function/index.html#static-function-routeFromPath">routeFromPath</a></span></li>
-</ul>
-</div>
-
-<div data-ice="variableWrap">
-  <h2><a href="variable/">Variable</a></h2>
-  <ul>
-    
-  <li data-ice="variableDoc"><span><a href="variable/index.html#static-variable-endpointHandler">endpointHandler</a></span></li>
-<li data-ice="variableDoc"><span><a href="variable/index.html#static-variable-router">router</a></span></li>
-<li data-ice="variableDoc"><span><a href="variable/index.html#static-variable-server">server</a></span></li>
-</ul>
-</div>
-
-
-
-
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">lib/connector_handler.js</h1>
-<pre class="source-code line-number"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
 import logger from &apos;@hoist/logger&apos;;
 import errors from &apos;@hoist/errors&apos;;
-import Authorization from &apos;./authorization&apos;;
+import { Authorization } from &apos;./authorization&apos;;
 import fs from &apos;fs&apos;;
 import path from &apos;path&apos;;
 import config from &apos;config&apos;;
-import {
-  BouncerToken,
-  ConnectorSetting
-}
-from &apos;@hoist/model&apos;;
-import {
-  Publisher
-}
-from &apos;@hoist/broker&apos;;
+import { BouncerToken, ConnectorSetting } from &apos;@hoist/model&apos;;
+import { Publisher } from &apos;@hoist/broker&apos;;
 
-export default class ConnectorHandler {
+export class ConnectorHandler {
   constructor() {
     this._logger = logger.child({
       cls: this.constructor.name
@@ -119,46 +90,47 @@ export default class ConnectorHandler {
           key: request.params.connectorKey
         });
       }).then((bouncerToken) =&gt; {
-        if (!bouncerToken) {
-          throw new errors.Http404Error(&apos;invalid key&apos;);
+      if (!bouncerToken) {
+        throw new errors.Http404Error(&apos;invalid key&apos;);
+      }
+      return ConnectorSetting.findOneAsync({
+        application: bouncerToken.application,
+        environment: bouncerToken.environment,
+        key: bouncerToken.connectorKey
+      }).then((connectorSettings) =&gt; {
+        if (!connectorSettings) {
+          throw new errors.Http500Error(&apos;unable to find connector settings&apos;);
         }
-        return ConnectorSetting.findOneAsync({
-          application: bouncerToken.application,
-          environment: bouncerToken.environment,
-          key: bouncerToken.connectorKey
-        }).then((connectorSettings) =&gt; {
-          if (!connectorSettings) {
-            throw new errors.Http500Error(&apos;unable to find connector settings&apos;);
-          }
-          return this._loadConnector(connectorSettings);
-        }).then((connector) =&gt; {
-          if (!connector) {
-            throw new errors.Http500Error(&apos;unable to load connector&apos;);
-          }
-          if (!connector.intercept) {
+        return this._loadConnector(connectorSettings);
+      }).then((connector) =&gt; {
+        if (!connector) {
+          throw new errors.Http500Error(&apos;unable to load connector&apos;);
+        }
+        if (!connector.intercept) {
+          return reply({
+            ok: true
+          });
+        }
+        return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))
+          .then(function() {
             return reply({
               ok: true
             });
-          }
-          return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))
-            .then(function () {
-              return reply({
-                ok: true
-              });
-            });
-        });
-      }).catch((err) =&gt; {
-        this._logger.error(err);
-        reply(err);
+          });
       });
+    }).catch((err) =&gt; {
+      this._logger.error(err);
+      reply(err);
+    });
 
   }
 }
 </code></pre>
+
 </div>
 
 <footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.1.4)</span></a>
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.4)</span></a>
 </footer>
 
 <script src="script/search_index.js"></script>

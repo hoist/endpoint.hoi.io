@@ -1,42 +1,34 @@
 'use strict';
 import config from 'config';
-import Server from '../../lib/server';
+import { Server } from '../../lib/server';
 import Bluebird from 'bluebird';
 import sinon from 'sinon';
-import {
-  expect
-}
-from 'chai';
-import {
-  _mongoose,
-  Organisation,
-  Application
-}
-from '@hoist/model';
+import { expect } from 'chai';
+import { _mongoose, Organisation, Application } from '@hoist/model';
 Bluebird.promisifyAll(_mongoose);
 
 /** @test {EndpointHandler#onRequest} */
-describe('EndpointHandler', function () {
+describe('EndpointHandler', function() {
   let server;
   before(() => {
     server = new Server();
     server._createHapiServer();
   });
-  describe('#onRequest', function () {
-    describe('with no matching organisation', function () {
+  describe('#onRequest', function() {
+    describe('with no matching organisation', function() {
       var _response;
       before(() => {
         return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))
           .then(() => {
             return new Promise((resolve) => {
-                server._hapi.inject({
-                  method: 'GET',
-                  url: '/org/app/endpoint'
-                }, (res) => {
-                  resolve(res);
-                });
-              })
-              .then(function (res) {
+              server._hapi.inject({
+                method: 'GET',
+                url: '/org/app/endpoint'
+              }, (res) => {
+                resolve(res);
+              });
+            })
+              .then(function(res) {
                 _response = res;
               });
           });
@@ -44,11 +36,11 @@ describe('EndpointHandler', function () {
       after(() => {
         return _mongoose.disconnectAsync();
       });
-      it('returns a 404 response', function () {
+      it('returns a 404 response', function() {
         expect(_response.statusCode).to.eql(404);
       });
     });
-    describe('with no matching application', function () {
+    describe('with no matching application', function() {
       var _response;
       before(() => {
         sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(
@@ -62,23 +54,23 @@ describe('EndpointHandler', function () {
               server._hapi.inject({
                 method: 'GET',
                 url: '/org/app/endpoint'
-              }, function (res) {
+              }, function(res) {
                 resolve(res);
               });
             });
           }).then((res) => {
-            _response = res;
-          });
+          _response = res;
+        });
       });
       after(() => {
         Organisation.findOneAsync.restore();
         return _mongoose.disconnectAsync();
       });
-      it('returns a 404 response', function () {
+      it('returns a 404 response', function() {
         expect(_response.statusCode).to.eql(404);
       });
     });
-    describe('with no endpoints', function () {
+    describe('with no endpoints', function() {
       var _response;
       before(() => {
         sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(
@@ -97,7 +89,7 @@ describe('EndpointHandler', function () {
               server._hapi.inject({
                 method: 'GET',
                 url: '/org/app/endpoint'
-              }, function (res) {
+              }, function(res) {
                 _response = res;
                 resolve();
               });
@@ -109,11 +101,11 @@ describe('EndpointHandler', function () {
         Organisation.findOneAsync.restore();
         return _mongoose.disconnectAsync();
       });
-      it('returns a 404 response', function () {
+      it('returns a 404 response', function() {
         expect(_response.statusCode).to.eql(404);
       });
     });
-    describe('with matching endpoints', function () {
+    describe('with matching endpoints', function() {
       var _response;
       before(() => {
         sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(
@@ -140,7 +132,7 @@ describe('EndpointHandler', function () {
               server._hapi.inject({
                 method: 'GET',
                 url: '/org/app/endpoint'
-              }, function (res) {
+              }, function(res) {
                 _response = res;
                 resolve();
               });
@@ -152,7 +144,7 @@ describe('EndpointHandler', function () {
         Organisation.findOneAsync.restore();
         return _mongoose.disconnectAsync();
       });
-      it('returns a 404 response', function () {
+      it('returns a 404 response', function() {
         expect(_response.statusCode).to.eql(404);
       });
     });

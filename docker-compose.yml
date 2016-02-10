@@ -1,5 +1,5 @@
 web:
-  build: .
+  image: hoist/endpoint.hoi.io:master
   external_links:
     - hoist_db_1:db
     - hoist_rabbitmq_1:rabbitmq

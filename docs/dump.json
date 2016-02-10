@@ -1,5 +1,6 @@
 [
   {
+    "__docId__": 0,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -9,9 +10,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport uuid from 'uuid';\nimport {\n  Event\n}\nfrom '@hoist/model';\nimport {\n  filter\n}\nfrom 'lodash';\nexport default class Authorisation {\n  constructor(request, reply, bouncerToken, publisher) {\n    this._request = request;\n    this._reply = reply;\n    this._bouncerToken = bouncerToken;\n    this.query = request.query;\n    this.payload = request.payload;\n    this.key = bouncerToken.key;\n    this._publisher = publisher;\n  }\n  set(key, value, callback) {\n    this._bouncerToken.state[key] = value;\n    this._bouncerToken.markModified('state');\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  setDisplayProperty(name, value, callback) {\n    var existingProperty = filter(this._bouncerToken.displayProperties, (prop) => {\n      return prop.name.toLowerCase() === name.toLowerCase();\n    });\n    if (existingProperty.length !== 0) {\n      existingProperty[0].value = value;\n    } else {\n      this._bouncerToken.displayProperties.push({\n        name: name,\n        value: value\n      });\n    }\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  get(key) {\n    return this._bouncerToken.state[key];\n  }\n  delete(key, callback) {\n    delete this._bouncerToken.state[key];\n    this._bouncerToken.markModified('state');\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  raise(name, payload) {\n    let event = new Event({\n      eventId: uuid.v4().split('-').join(''),\n      applicationId: this._bouncerToken.application,\n      eventName: name,\n      environment: 'live',\n      correlationId: require('uuid').v4(),\n      payload: payload\n    });\n    return this._publisher.publish(event);\n  }\n}\n"
+    "content": "'use strict';\nimport uuid from 'uuid';\nimport {\n  Event\n}\nfrom '@hoist/model';\nimport {\n  filter\n}\nfrom 'lodash';\nexport class Authorisation {\n  constructor(request, reply, bouncerToken, publisher) {\n    this._request = request;\n    this._reply = reply;\n    this._bouncerToken = bouncerToken;\n    this.query = request.query;\n    this.payload = request.payload;\n    this.key = bouncerToken.key;\n    this._publisher = publisher;\n  }\n  set(key, value, callback) {\n    this._bouncerToken.state[key] = value;\n    this._bouncerToken.markModified('state');\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  setDisplayProperty(name, value, callback) {\n    var existingProperty = filter(this._bouncerToken.displayProperties, (prop) => {\n      return prop.name.toLowerCase() === name.toLowerCase();\n    });\n    if (existingProperty.length !== 0) {\n      existingProperty[0].value = value;\n    } else {\n      this._bouncerToken.displayProperties.push({\n        name: name,\n        value: value\n      });\n    }\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  get(key) {\n    return this._bouncerToken.state[key];\n  }\n  delete(key, callback) {\n    delete this._bouncerToken.state[key];\n    this._bouncerToken.markModified('state');\n    return this._bouncerToken.saveAsync().then(() => {\n      return this;\n    }).nodeify(callback);\n  }\n  raise(name, payload) {\n    let event = new Event({\n      eventId: uuid.v4().split('-').join(''),\n      applicationId: this._bouncerToken.application,\n      eventName: name,\n      environment: 'live',\n      correlationId: require('uuid').v4(),\n      payload: payload\n    });\n    return this._publisher.publish(event);\n  }\n}\n"
   },
   {
+    "__docId__": 1,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -21,13 +23,14 @@
     "access": null,
     "export": true,
     "importPath": "@hoist/endpoint.hoi.io/lib/authorization.js",
-    "importStyle": "Authorisation",
+    "importStyle": "{Authorisation}",
     "description": null,
     "lineNumber": 11,
     "undocument": true,
     "interface": false
   },
   {
+    "__docId__": 2,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -67,6 +70,7 @@
     "generator": false
   },
   {
+    "__docId__": 3,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -84,6 +88,7 @@
     }
   },
   {
+    "__docId__": 4,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -101,6 +106,7 @@
     }
   },
   {
+    "__docId__": 5,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -118,6 +124,7 @@
     }
   },
   {
+    "__docId__": 6,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -135,6 +142,7 @@
     }
   },
   {
+    "__docId__": 7,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -152,6 +160,7 @@
     }
   },
   {
+    "__docId__": 8,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -169,6 +178,7 @@
     }
   },
   {
+    "__docId__": 9,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -186,6 +196,7 @@
     }
   },
   {
+    "__docId__": 10,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -224,6 +235,7 @@
     "generator": false
   },
   {
+    "__docId__": 11,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -262,6 +274,7 @@
     "generator": false
   },
   {
+    "__docId__": 12,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -288,6 +301,7 @@
     "generator": false
   },
   {
+    "__docId__": 13,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -320,6 +334,7 @@
     "generator": false
   },
   {
+    "__docId__": 14,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -352,6 +367,7 @@
     "generator": false
   },
   {
+    "__docId__": 15,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -361,9 +377,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport logger from '@hoist/logger';\nimport errors from '@hoist/errors';\nimport Authorization from './authorization';\nimport fs from 'fs';\nimport path from 'path';\nimport config from 'config';\nimport {\n  BouncerToken,\n  ConnectorSetting\n}\nfrom '@hoist/model';\nimport {\n  Publisher\n}\nfrom '@hoist/broker';\n\nexport default class ConnectorHandler {\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n  _loadConnector(connectorSettings) {\n    return Promise.resolve()\n      .then(() => {\n        var connectorPath = path.resolve(path.join(config.get('Hoist.filePaths.connectors'), connectorSettings.connectorType, 'current'));\n        /*istanbul ignore if */\n        if (!fs.existsSync(connectorPath)) {\n          throw new errors.connector.InvalidError();\n        }\n\n        var realpath = fs.readlinkSync(connectorPath);\n        logger.info({\n          connectorPath: connectorPath,\n          realpath: realpath\n        }, 'connectorPath');\n        return require(realpath);\n      })\n      .then((Connector) => {\n        connectorSettings.settings._connectorKey = connectorSettings.key;\n        connectorSettings.settings._applicationId = connectorSettings.application;\n        return new Connector(connectorSettings.settings);\n      });\n  }\n  onRequest(request, reply) {\n    this._logger.info('starting connector request');\n    return Promise.resolve()\n      .then(() => {\n        return BouncerToken.findOneAsync({\n          key: request.params.connectorKey\n        });\n      }).then((bouncerToken) => {\n        if (!bouncerToken) {\n          throw new errors.Http404Error('invalid key');\n        }\n        return ConnectorSetting.findOneAsync({\n          application: bouncerToken.application,\n          environment: bouncerToken.environment,\n          key: bouncerToken.connectorKey\n        }).then((connectorSettings) => {\n          if (!connectorSettings) {\n            throw new errors.Http500Error('unable to find connector settings');\n          }\n          return this._loadConnector(connectorSettings);\n        }).then((connector) => {\n          if (!connector) {\n            throw new errors.Http500Error('unable to load connector');\n          }\n          if (!connector.intercept) {\n            return reply({\n              ok: true\n            });\n          }\n          return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))\n            .then(function () {\n              return reply({\n                ok: true\n              });\n            });\n        });\n      }).catch((err) => {\n        this._logger.error(err);\n        reply(err);\n      });\n\n  }\n}\n"
+    "content": "'use strict';\nimport logger from '@hoist/logger';\nimport errors from '@hoist/errors';\nimport { Authorization } from './authorization';\nimport fs from 'fs';\nimport path from 'path';\nimport config from 'config';\nimport { BouncerToken, ConnectorSetting } from '@hoist/model';\nimport { Publisher } from '@hoist/broker';\n\nexport class ConnectorHandler {\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n  _loadConnector(connectorSettings) {\n    return Promise.resolve()\n      .then(() => {\n        var connectorPath = path.resolve(path.join(config.get('Hoist.filePaths.connectors'), connectorSettings.connectorType, 'current'));\n        /*istanbul ignore if */\n        if (!fs.existsSync(connectorPath)) {\n          throw new errors.connector.InvalidError();\n        }\n\n        var realpath = fs.readlinkSync(connectorPath);\n        logger.info({\n          connectorPath: connectorPath,\n          realpath: realpath\n        }, 'connectorPath');\n        return require(realpath);\n      })\n      .then((Connector) => {\n        connectorSettings.settings._connectorKey = connectorSettings.key;\n        connectorSettings.settings._applicationId = connectorSettings.application;\n        return new Connector(connectorSettings.settings);\n      });\n  }\n  onRequest(request, reply) {\n    this._logger.info('starting connector request');\n    return Promise.resolve()\n      .then(() => {\n        return BouncerToken.findOneAsync({\n          key: request.params.connectorKey\n        });\n      }).then((bouncerToken) => {\n      if (!bouncerToken) {\n        throw new errors.Http404Error('invalid key');\n      }\n      return ConnectorSetting.findOneAsync({\n        application: bouncerToken.application,\n        environment: bouncerToken.environment,\n        key: bouncerToken.connectorKey\n      }).then((connectorSettings) => {\n        if (!connectorSettings) {\n          throw new errors.Http500Error('unable to find connector settings');\n        }\n        return this._loadConnector(connectorSettings);\n      }).then((connector) => {\n        if (!connector) {\n          throw new errors.Http500Error('unable to load connector');\n        }\n        if (!connector.intercept) {\n          return reply({\n            ok: true\n          });\n        }\n        return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))\n          .then(function() {\n            return reply({\n              ok: true\n            });\n          });\n      });\n    }).catch((err) => {\n      this._logger.error(err);\n      reply(err);\n    });\n\n  }\n}\n"
   },
   {
+    "__docId__": 16,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -373,13 +390,14 @@
     "access": null,
     "export": true,
     "importPath": "@hoist/endpoint.hoi.io/lib/connector_handler.js",
-    "importStyle": "ConnectorHandler",
+    "importStyle": "{ConnectorHandler}",
     "description": null,
-    "lineNumber": 18,
+    "lineNumber": 11,
     "undocument": true,
     "interface": false
   },
   {
+    "__docId__": 17,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -388,12 +406,13 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#constructor",
     "access": null,
     "description": null,
-    "lineNumber": 19,
+    "lineNumber": 12,
     "undocument": true,
     "params": [],
     "generator": false
   },
   {
+    "__docId__": 18,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -402,7 +421,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#_logger",
     "access": null,
     "description": null,
-    "lineNumber": 20,
+    "lineNumber": 13,
     "undocument": true,
     "type": {
       "types": [
@@ -411,6 +430,7 @@
     }
   },
   {
+    "__docId__": 19,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -419,7 +439,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#_publisher",
     "access": null,
     "description": null,
-    "lineNumber": 23,
+    "lineNumber": 16,
     "undocument": true,
     "type": {
       "types": [
@@ -428,6 +448,7 @@
     }
   },
   {
+    "__docId__": 20,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -436,7 +457,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#_loadConnector",
     "access": null,
     "description": null,
-    "lineNumber": 25,
+    "lineNumber": 18,
     "undocument": true,
     "params": [
       {
@@ -454,6 +475,7 @@
     "generator": false
   },
   {
+    "__docId__": 21,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -462,7 +484,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#onRequest",
     "access": null,
     "description": null,
-    "lineNumber": 47,
+    "lineNumber": 40,
     "undocument": true,
     "params": [
       {
@@ -486,6 +508,7 @@
     "generator": false
   },
   {
+    "__docId__": 22,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -495,9 +518,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport errors from '@hoist/errors';\nimport logger from '@hoist/logger';\nimport Boom from 'boom';\nimport Moment from 'moment';\nimport {\n  routeFromPath\n}\nfrom './url_helpers';\nimport {\n  Publisher\n}\nfrom '@hoist/broker';\nimport {\n  Organisation,\n  Application,\n  EventMetric,\n  Event\n}\nfrom '@hoist/model';\nimport {\n  clone,\n  isObject,\n  extend\n}\nfrom 'lodash';\nimport uuid from 'uuid';\n\n/**\n * class to handle incoming requests\n */\n\nclass EndpointHandler {\n  /**\n   * create new handler\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n\n  /**\n   * handle incoming requests and turn them into events\n   * @returns {Promise}\n   */\n  onRequest(req, reply) {\n    this._logger.info('got a webhook request');\n    return Organisation.findOneAsync({\n        slug: req.params.orgSlug\n      }).then((organisation) => {\n        if (!organisation) {\n          throw new errors.model.NotFoundError();\n        }\n        return Application.findOneAsync({\n          slug: req.params.appSlug,\n          organisation: organisation._id\n        });\n      }).then((application) => {\n        if (!application) {\n          throw new errors.model.NotFoundError();\n        }\n        if ((!application.settings.live) || (!application.settings.live.endpoints)) {\n          throw new errors.Http404Error('No Endpoint Found');\n        }\n        this._logger.info({\n          application: application._id\n        }, 'found org and app');\n        req.params.endpoint = '/' + req.params.endpoint;\n        return Promise.resolve(routeFromPath(application.settings.live.endpoints, req.method, req.params.endpoint))\n          .then((route) => {\n            this._logger.info({\n              application: application._id,\n              route: route,\n              endpoint: 'req.params.endpoint'\n            }, 'mapped route');\n            if (!route) {\n              throw new errors.Http404Error('No Endpoint Found');\n            }\n            this._logger.info('got an endpoint');\n            var payload = clone(route, true);\n            delete payload.event;\n            delete payload.method;\n            delete payload.authenticate;\n            if (req.method.toLowerCase() === 'post') {\n              if (isObject(req.payload)) {\n                payload = extend(payload, req.payload);\n              }\n            }\n\n            payload._request = {\n              body: req.payload,\n              headers: req.headers,\n              url: req.params.endpoint,\n              method: req.method\n            };\n\n            var queryString = req.url.search;\n\n            if (queryString) {\n              payload._request.queryString = queryString;\n              payload._request.query = req.url.query;\n            }\n\n            delete payload._request.headers.host;\n            this._logger.info('building event');\n            var ev = new Event({\n              eventId: uuid.v4().split('-').join(''),\n              applicationId: application._id,\n              eventName: route.event,\n              environment: 'live',\n              correlationId: require('uuid').v4(),\n              payload: payload\n            });\n            return ev;\n          });\n      })\n      .then((event) => {\n        this._logger.info({\n          event: event\n        }, 'sending event to broker');\n\n        return this._publisher.publish(event)\n          .then(() => {\n            var raisedDate = new Moment();\n            var update = {\n              $inc: {}\n            };\n            update.$inc.totalRaised = 1;\n            update.$inc['raised.' + raisedDate.utc().minutes()] = 1;\n            EventMetric.updateAsync({\n              application: event.applicationId,\n              environment: 'live',\n              eventName: event.eventName,\n              timestampHour: raisedDate.utc().startOf('hour').toDate()\n            }, update, {\n              upsert: true\n            }).catch(function (err) {\n              this._logger.alert(err);\n              this._logger.error(err);\n            });\n            return event;\n          });\n      })\n      .then((event) => {\n        this._logger.info('sending reply');\n        var response = reply(event.toObject());\n        response.header('x-hoist-cid', event.correlationId);\n        response.header('x-hoist-eid', event.eventId);\n        response.statusCode = 200;\n      }).catch((err) => {\n        this._logger.error(err);\n        if (!errors.isHoistError(err)) {\n          console.log(err);\n          this._logger.alert(err);\n          err = new errors.HoistError();\n        }\n        this._logger.info('sending error reply');\n        reply(Boom.wrap(err, parseInt(err.code)));\n      });\n  }\n}\n\n\nexport default EndpointHandler;\n"
+    "content": "'use strict';\nimport errors from '@hoist/errors';\nimport logger from '@hoist/logger';\nimport Boom from 'boom';\nimport Moment from 'moment';\nimport { routeFromPath } from './url_helpers';\nimport { Publisher } from '@hoist/broker';\nimport { Organisation, Application, EventMetric, Event } from '@hoist/model';\nimport { clone, isObject, extend } from 'lodash';\nimport uuid from 'uuid';\n\n/**\n * class to handle incoming requests\n */\n\nexport class EndpointHandler {\n  /**\n   * create new handler\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n\n  /**\n   * handle incoming requests and turn them into events\n   * @returns {Promise}\n   */\n  onRequest(req, reply) {\n    this._logger.info('got a webhook request');\n    return Organisation.findOneAsync({\n      slug: req.params.orgSlug\n    }).then((organisation) => {\n      if (!organisation) {\n        throw new errors.model.NotFoundError();\n      }\n      return Application.findOneAsync({\n        slug: req.params.appSlug,\n        organisation: organisation._id\n      });\n    }).then((application) => {\n      if (!application) {\n        throw new errors.model.NotFoundError();\n      }\n      if ((!application.settings.live) || (!application.settings.live.endpoints)) {\n        throw new errors.Http404Error('No Endpoint Found');\n      }\n      this._logger.info({\n        application: application._id\n      }, 'found org and app');\n      req.params.endpoint = '/' + req.params.endpoint;\n      return Promise.resolve(routeFromPath(application.settings.live.endpoints, req.method, req.params.endpoint))\n        .then((route) => {\n          this._logger.info({\n            application: application._id,\n            route: route,\n            endpoint: 'req.params.endpoint'\n          }, 'mapped route');\n          if (!route) {\n            throw new errors.Http404Error('No Endpoint Found');\n          }\n          this._logger.info('got an endpoint');\n          var payload = clone(route, true);\n          delete payload.event;\n          delete payload.method;\n          delete payload.authenticate;\n          if (req.method.toLowerCase() === 'post') {\n            if (isObject(req.payload)) {\n              payload = extend(payload, req.payload);\n            }\n          }\n\n          payload._request = {\n            body: req.payload,\n            headers: req.headers,\n            url: req.params.endpoint,\n            method: req.method\n          };\n\n          var queryString = req.url.search;\n\n          if (queryString) {\n            payload._request.queryString = queryString;\n            payload._request.query = req.url.query;\n          }\n\n          delete payload._request.headers.host;\n          this._logger.info('building event');\n          var ev = new Event({\n            eventId: uuid.v4().split('-').join(''),\n            applicationId: application._id,\n            eventName: route.event,\n            environment: 'live',\n            correlationId: require('uuid').v4(),\n            payload: payload\n          });\n          return ev;\n        });\n    })\n      .then((event) => {\n        this._logger.info({\n          event: event\n        }, 'sending event to broker');\n\n        return this._publisher.publish(event)\n          .then(() => {\n            var raisedDate = new Moment();\n            var update = {\n              $inc: {}\n            };\n            update.$inc.totalRaised = 1;\n            update.$inc['raised.' + raisedDate.utc().minutes()] = 1;\n            EventMetric.updateAsync({\n              application: event.applicationId,\n              environment: 'live',\n              eventName: event.eventName,\n              timestampHour: raisedDate.utc().startOf('hour').toDate()\n            }, update, {\n              upsert: true\n            }).catch(function(err) {\n              this._logger.alert(err);\n              this._logger.error(err);\n            });\n            return event;\n          });\n      })\n      .then((event) => {\n        this._logger.info('sending reply');\n        var response = reply(event.toObject());\n        response.header('x-hoist-cid', event.correlationId);\n        response.header('x-hoist-eid', event.eventId);\n        response.statusCode = 200;\n      }).catch((err) => {\n      this._logger.error(err);\n      if (!errors.isHoistError(err)) {\n        console.log(err);\n        this._logger.alert(err);\n        err = new errors.HoistError();\n      }\n      this._logger.info('sending error reply');\n      reply(Boom.wrap(err, parseInt(err.code)));\n    });\n  }\n}\n"
   },
   {
+    "__docId__": 23,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -507,12 +531,13 @@
     "access": null,
     "export": true,
     "importPath": "@hoist/endpoint.hoi.io/lib/endpoint_handler.js",
-    "importStyle": "EndpointHandler",
+    "importStyle": "{EndpointHandler}",
     "description": "class to handle incoming requests",
-    "lineNumber": 33,
+    "lineNumber": 16,
     "interface": false
   },
   {
+    "__docId__": 24,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -521,11 +546,12 @@
     "longname": "lib/endpoint_handler.js~EndpointHandler#constructor",
     "access": null,
     "description": "create new handler",
-    "lineNumber": 37,
+    "lineNumber": 20,
     "params": [],
     "generator": false
   },
   {
+    "__docId__": 25,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -534,7 +560,7 @@
     "longname": "lib/endpoint_handler.js~EndpointHandler#_logger",
     "access": null,
     "description": null,
-    "lineNumber": 38,
+    "lineNumber": 21,
     "undocument": true,
     "type": {
       "types": [
@@ -543,6 +569,7 @@
     }
   },
   {
+    "__docId__": 26,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -551,7 +578,7 @@
     "longname": "lib/endpoint_handler.js~EndpointHandler#_publisher",
     "access": null,
     "description": null,
-    "lineNumber": 41,
+    "lineNumber": 24,
     "undocument": true,
     "type": {
       "types": [
@@ -560,6 +587,7 @@
     }
   },
   {
+    "__docId__": 27,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -568,7 +596,7 @@
     "longname": "lib/endpoint_handler.js~EndpointHandler#onRequest",
     "access": null,
     "description": "handle incoming requests and turn them into events",
-    "lineNumber": 48,
+    "lineNumber": 31,
     "unknown": [
       {
         "tagName": "@returns",
@@ -600,26 +628,7 @@
     "generator": false
   },
   {
-    "kind": "variable",
-    "static": true,
-    "variation": null,
-    "name": "endpointHandler",
-    "memberof": "lib/endpoint_handler.js",
-    "longname": "lib/endpoint_handler.js~endpointHandler",
-    "access": null,
-    "export": true,
-    "importPath": "@hoist/endpoint.hoi.io/lib/endpoint_handler.js",
-    "importStyle": "endpointHandler",
-    "description": null,
-    "lineNumber": 166,
-    "undocument": true,
-    "type": {
-      "types": [
-        "lib/endpoint_handler.js~EndpointHandler"
-      ]
-    }
-  },
-  {
+    "__docId__": 28,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -629,9 +638,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport EndpointHandler from './endpoint_handler';\nimport logger from '@hoist/logger';\nimport ConnectorHandler from './connector_handler';\n\n/**\n * maps routes to handlers for this server\n */\n\nclass Router {\n  /**\n   * create a new router\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._endpointHandler = new EndpointHandler();\n    this._connectorHandler = new ConnectorHandler();\n  }\n\n  /**\n   * map routes to endpoints on the server\n   */\n  mapRoutes(server) {\n    server.route({\n      path: '/connector/{connectorKey}/{endpoint*}',\n      handler: this._connectorHandler.onRequest,\n      config: {\n        bind: this._connectorHandler,\n        payload: {\n          parse: true,\n          maxBytes: '2097152',\n          output: 'data'\n        }\n      },\n      method: ['*']\n    });\n    server.route({\n      path: '/{orgSlug}/{appSlug}/{endpoint*}',\n      handler: this._endpointHandler.onRequest,\n      config: {\n        bind: this._endpointHandler,\n        payload: {\n          parse: true,\n          maxBytes: '2097152',\n          output: 'data'\n        }\n      },\n      method: ['*']\n    });\n  }\n}\n\n\nexport default Router;\n"
+    "content": "'use strict';\nimport { EndpointHandler } from './endpoint_handler';\nimport logger from '@hoist/logger';\nimport { ConnectorHandler } from './connector_handler';\n\n/**\n * maps routes to handlers for this server\n */\n\nexport class Router {\n  /**\n   * create a new router\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._endpointHandler = new EndpointHandler();\n    this._connectorHandler = new ConnectorHandler();\n  }\n\n  /**\n   * map routes to endpoints on the server\n   */\n  mapRoutes(server) {\n    server.route({\n      path: '/connector/{connectorKey}/{endpoint*}',\n      handler: this._connectorHandler.onRequest,\n      config: {\n        bind: this._connectorHandler,\n        payload: {\n          parse: true,\n          maxBytes: '2097152',\n          output: 'data'\n        }\n      },\n      method: ['*']\n    });\n    server.route({\n      path: '/{orgSlug}/{appSlug}/{endpoint*}',\n      handler: this._endpointHandler.onRequest,\n      config: {\n        bind: this._endpointHandler,\n        payload: {\n          parse: true,\n          maxBytes: '2097152',\n          output: 'data'\n        }\n      },\n      method: ['*']\n    });\n  }\n}\n"
   },
   {
+    "__docId__": 29,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -641,12 +651,13 @@
     "access": null,
     "export": true,
     "importPath": "@hoist/endpoint.hoi.io/lib/router.js",
-    "importStyle": "Router",
+    "importStyle": "{Router}",
     "description": "maps routes to handlers for this server",
     "lineNumber": 10,
     "interface": false
   },
   {
+    "__docId__": 30,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -660,6 +671,7 @@
     "generator": false
   },
   {
+    "__docId__": 31,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -677,6 +689,7 @@
     }
   },
   {
+    "__docId__": 32,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -694,6 +707,7 @@
     }
   },
   {
+    "__docId__": 33,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -711,6 +725,7 @@
     }
   },
   {
+    "__docId__": 34,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -731,26 +746,7 @@
     "generator": false
   },
   {
-    "kind": "variable",
-    "static": true,
-    "variation": null,
-    "name": "router",
-    "memberof": "lib/router.js",
-    "longname": "lib/router.js~router",
-    "access": null,
-    "export": true,
-    "importPath": "@hoist/endpoint.hoi.io/lib/router.js",
-    "importStyle": "router",
-    "description": null,
-    "lineNumber": 56,
-    "undocument": true,
-    "type": {
-      "types": [
-        "lib/router.js~Router"
-      ]
-    }
-  },
-  {
+    "__docId__": 35,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -760,9 +756,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport Hapi from 'hapi';\nimport config from 'config';\nimport {\n  _mongoose\n}\nfrom '@hoist/model';\nimport Router from './router';\nimport logger from '@hoist/logger';\nimport Bluebird from 'bluebird';\nBluebird.promisifyAll(_mongoose);\n\n\n/**\n * the Hoist endpoint server\n */\nclass Server {\n  /**\n   * create a new instance of the server\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._router = new Router();\n  }\n  _createHapiServer() {\n    this._logger.info('creating hapi server');\n    this._hapi = new Hapi.Server();\n    Bluebird.promisifyAll(this._hapi);\n    this._hapi.connection({\n      host: config.get('Hoist.server.host'),\n      port: config.get('Hoist.server.port')\n    });\n    this._router.mapRoutes(this._hapi);\n  }\n\n  /**\n   * start the server\n   * @returns {Promise}\n   */\n  start() {\n    return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n      .then(() => {\n        this._createHapiServer();\n        return this._hapi.startAsync()\n          .then(() => {\n            logger.info('server started');\n          });\n      });\n  }\n\n  /**\n   * stop the server\n   * @returns {Promise}\n   */\n  stop() {\n    this._logger.info('stoping server');\n    return Promise.resolve()\n      .then(() => {\n        if (this._hapi) {\n          this._logger.info('server shutting down');\n          return this._hapi.stopAsync().then(() => {\n            delete this._hapi;\n            return _mongoose.disconnectAsync().then(() => {\n              logger.info('server shutdown');\n            });\n          });\n        }\n      });\n  }\n}\n\nexport default Server;\n"
+    "content": "'use strict';\nimport Hapi from 'hapi';\nimport config from 'config';\nimport { _mongoose } from '@hoist/model';\nimport { Router } from './router';\nimport logger from '@hoist/logger';\nimport Bluebird from 'bluebird';\nBluebird.promisifyAll(_mongoose);\n\n\n/**\n * the Hoist endpoint server\n */\nexport class Server {\n  /**\n   * create a new instance of the server\n   */\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._router = new Router();\n  }\n  _createHapiServer() {\n    this._logger.info('creating hapi server');\n    this._hapi = new Hapi.Server();\n    Bluebird.promisifyAll(this._hapi);\n    this._hapi.connection({\n      host: config.get('Hoist.server.host'),\n      port: config.get('Hoist.server.port')\n    });\n    this._router.mapRoutes(this._hapi);\n  }\n\n  /**\n   * start the server\n   * @returns {Promise}\n   */\n  start() {\n    return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n      .then(() => {\n        this._createHapiServer();\n        return this._hapi.startAsync()\n          .then(() => {\n            logger.info('server started');\n          });\n      });\n  }\n\n  /**\n   * stop the server\n   * @returns {Promise}\n   */\n  stop() {\n    this._logger.info('stoping server');\n    return Promise.resolve()\n      .then(() => {\n        if (this._hapi) {\n          this._logger.info('server shutting down');\n          return this._hapi.stopAsync().then(() => {\n            delete this._hapi;\n            return _mongoose.disconnectAsync().then(() => {\n              logger.info('server shutdown');\n            });\n          });\n        }\n      });\n  }\n}\n"
   },
   {
+    "__docId__": 36,
     "kind": "class",
     "static": true,
     "variation": null,
@@ -772,12 +769,13 @@
     "access": null,
     "export": true,
     "importPath": "@hoist/endpoint.hoi.io/lib/server.js",
-    "importStyle": "Server",
+    "importStyle": "{Server}",
     "description": "the Hoist endpoint server",
-    "lineNumber": 17,
+    "lineNumber": 14,
     "interface": false
   },
   {
+    "__docId__": 37,
     "kind": "constructor",
     "static": false,
     "variation": null,
@@ -786,17 +784,36 @@
     "longname": "lib/server.js~Server#constructor",
     "access": null,
     "description": "create a new instance of the server",
-    "lineNumber": 21,
+    "lineNumber": 18,
     "params": [],
     "generator": false
   },
   {
+    "__docId__": 38,
     "kind": "member",
     "static": false,
     "variation": null,
     "name": "_logger",
     "memberof": "lib/server.js~Server",
     "longname": "lib/server.js~Server#_logger",
+    "access": null,
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 39,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "_router",
+    "memberof": "lib/server.js~Server",
+    "longname": "lib/server.js~Server#_router",
     "access": null,
     "description": null,
     "lineNumber": 22,
@@ -808,23 +825,7 @@
     }
   },
   {
-    "kind": "member",
-    "static": false,
-    "variation": null,
-    "name": "_router",
-    "memberof": "lib/server.js~Server",
-    "longname": "lib/server.js~Server#_router",
-    "access": null,
-    "description": null,
-    "lineNumber": 25,
-    "undocument": true,
-    "type": {
-      "types": [
-        "*"
-      ]
-    }
-  },
-  {
+    "__docId__": 40,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -833,12 +834,13 @@
     "longname": "lib/server.js~Server#_createHapiServer",
     "access": null,
     "description": null,
-    "lineNumber": 27,
+    "lineNumber": 24,
     "undocument": true,
     "params": [],
     "generator": false
   },
   {
+    "__docId__": 41,
     "kind": "member",
     "static": false,
     "variation": null,
@@ -847,7 +849,7 @@
     "longname": "lib/server.js~Server#_hapi",
     "access": null,
     "description": null,
-    "lineNumber": 29,
+    "lineNumber": 26,
     "undocument": true,
     "type": {
       "types": [
@@ -856,6 +858,7 @@
     }
   },
   {
+    "__docId__": 42,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -864,7 +867,7 @@
     "longname": "lib/server.js~Server#start",
     "access": null,
     "description": "start the server",
-    "lineNumber": 42,
+    "lineNumber": 39,
     "unknown": [
       {
         "tagName": "@returns",
@@ -883,6 +886,7 @@
     "generator": false
   },
   {
+    "__docId__": 43,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -891,7 +895,7 @@
     "longname": "lib/server.js~Server#stop",
     "access": null,
     "description": "stop the server",
-    "lineNumber": 57,
+    "lineNumber": 54,
     "unknown": [
       {
         "tagName": "@returns",
@@ -910,26 +914,7 @@
     "generator": false
   },
   {
-    "kind": "variable",
-    "static": true,
-    "variation": null,
-    "name": "server",
-    "memberof": "lib/server.js",
-    "longname": "lib/server.js~server",
-    "access": null,
-    "export": true,
-    "importPath": "@hoist/endpoint.hoi.io/lib/server.js",
-    "importStyle": "server",
-    "description": null,
-    "lineNumber": 74,
-    "undocument": true,
-    "type": {
-      "types": [
-        "lib/server.js~Server"
-      ]
-    }
-  },
-  {
+    "__docId__": 44,
     "kind": "file",
     "static": true,
     "variation": null,
@@ -939,9 +924,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport Router from 'routes';\nimport {\n  keys, assign, any\n}\nfrom 'lodash';\nRegExp.escape = function (s) {\n  return s.replace(/[-\\/\\\\^$*+?.()|[\\]{}]/g, '\\\\$&');\n};\n\n/**\n * maps a specific path to the correct route within an apps settings\n */\nexport function routeFromPath(endpoints, method, path) {\n  var router = new Router();\n  if (endpoints && path && method) {\n\n    var routes = keys(endpoints);\n    if (routes.length > 0) {\n      routes.forEach((r) => {\n        router.addRoute(r, () => {\n          return endpoints[r];\n        });\n      });\n      var match = router.match(path);\n      if (match) {\n        var endpoint = match.fn();\n        var methods = [].concat(endpoint.methods);\n\n        if (any(methods, function (m) {\n            return m.toLowerCase() === method.toLowerCase();\n          })) {\n          var params = assign(match.params, endpoint);\n          delete params.methods;\n          return params;\n\n        }\n      }\n    }\n  }\n  return null;\n}\n"
+    "content": "'use strict';\nimport { Router } from 'routes';\nimport { keys, assign, some } from 'lodash';\nRegExp.escape = function(s) {\n  return s.replace(/[-\\/\\\\^$*+?.()|[\\]{}]/g, '\\\\$&');\n};\n\n/**\n * maps a specific path to the correct route within an apps settings\n */\nexport function routeFromPath(endpoints, method, path) {\n  var router = new Router();\n  if (endpoints && path && method) {\n\n    var routes = keys(endpoints);\n    if (routes.length > 0) {\n      routes.forEach((r) => {\n        router.addRoute(r, () => {\n          return endpoints[r];\n        });\n      });\n      var match = router.match(path);\n      if (match) {\n        var endpoint = match.fn();\n        var methods = [].concat(endpoint.methods);\n\n        if (some(methods, function(m) {\n            return m.toLowerCase() === method.toLowerCase();\n          })) {\n          var params = assign(match.params, endpoint);\n          delete params.methods;\n          return params;\n\n        }\n      }\n    }\n  }\n  return null;\n}\n"
   },
   {
+    "__docId__": 45,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -953,7 +939,7 @@
     "importPath": "@hoist/endpoint.hoi.io/lib/url_helpers.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 7,
+    "lineNumber": 4,
     "undocument": true,
     "params": [
       {
@@ -971,6 +957,7 @@
     "generator": false
   },
   {
+    "__docId__": 46,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -982,7 +969,7 @@
     "importPath": "@hoist/endpoint.hoi.io/lib/url_helpers.js",
     "importStyle": "{routeFromPath}",
     "description": "maps a specific path to the correct route within an apps settings",
-    "lineNumber": 14,
+    "lineNumber": 11,
     "params": [
       {
         "name": "endpoints",
@@ -1011,6 +998,7 @@
     "generator": false
   },
   {
+    "__docId__": 48,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1023,6 +1011,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 49,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1035,6 +1024,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 50,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1047,6 +1037,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 51,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1059,6 +1050,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 52,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1071,6 +1063,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 53,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1083,6 +1076,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 54,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1095,6 +1089,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 55,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1107,6 +1102,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 56,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1119,6 +1115,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 57,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1131,6 +1128,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 58,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1143,6 +1141,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 59,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1155,6 +1154,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 60,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1167,6 +1167,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 61,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1179,6 +1180,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 62,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1191,6 +1193,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 63,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1203,6 +1206,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 64,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1215,6 +1219,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 65,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1227,6 +1232,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 66,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1239,6 +1245,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 67,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1251,6 +1258,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 68,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1263,6 +1271,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 69,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1275,6 +1284,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 70,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1287,6 +1297,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 71,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1299,6 +1310,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 72,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1311,6 +1323,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 73,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1323,6 +1336,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 74,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1335,6 +1349,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 75,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1347,6 +1362,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 76,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1359,6 +1375,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 77,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1371,6 +1388,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 78,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1383,6 +1401,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 79,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1395,6 +1414,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 80,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1407,6 +1427,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 81,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1419,6 +1440,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 82,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1431,6 +1453,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 83,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1443,6 +1466,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 84,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1455,6 +1479,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 85,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1467,6 +1492,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 86,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1479,6 +1505,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 87,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1491,6 +1518,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 88,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1503,6 +1531,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 89,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1515,6 +1544,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 90,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1527,6 +1557,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 91,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1539,6 +1570,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 92,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1551,6 +1583,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 93,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1563,6 +1596,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 94,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1575,6 +1609,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 96,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1587,6 +1622,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 97,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1599,6 +1635,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 98,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1611,6 +1648,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 99,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1623,6 +1661,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 100,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1635,6 +1674,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 101,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1647,6 +1687,7 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 102,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1659,6 +1700,20 @@
     "builtinExternal": true
   },
   {
+    "__docId__": 103,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": null,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 104,
     "kind": "testFile",
     "static": true,
     "variation": null,
@@ -1668,9 +1723,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport config from 'config';\nimport Server from '../../lib/server';\nimport Bluebird from 'bluebird';\nimport sinon from 'sinon';\nimport {\n  expect\n}\nfrom 'chai';\nimport {\n  _mongoose,\n  Organisation,\n  Application\n}\nfrom '@hoist/model';\nBluebird.promisifyAll(_mongoose);\n\n/** @test {EndpointHandler#onRequest} */\ndescribe('EndpointHandler', function () {\n  let server;\n  before(() => {\n    server = new Server();\n    server._createHapiServer();\n  });\n  describe('#onRequest', function () {\n    describe('with no matching organisation', function () {\n      var _response;\n      before(() => {\n        return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n          .then(() => {\n            return new Promise((resolve) => {\n                server._hapi.inject({\n                  method: 'GET',\n                  url: '/org/app/endpoint'\n                }, (res) => {\n                  resolve(res);\n                });\n              })\n              .then(function (res) {\n                _response = res;\n              });\n          });\n      });\n      after(() => {\n        return _mongoose.disconnectAsync();\n      });\n      it('returns a 404 response', function () {\n        expect(_response.statusCode).to.eql(404);\n      });\n    });\n    describe('with no matching application', function () {\n      var _response;\n      before(() => {\n        sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(\n          new Organisation({\n            _id: 'orgid'\n          })\n        ));\n        return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n          .then(() => {\n            return new Promise((resolve) => {\n              server._hapi.inject({\n                method: 'GET',\n                url: '/org/app/endpoint'\n              }, function (res) {\n                resolve(res);\n              });\n            });\n          }).then((res) => {\n            _response = res;\n          });\n      });\n      after(() => {\n        Organisation.findOneAsync.restore();\n        return _mongoose.disconnectAsync();\n      });\n      it('returns a 404 response', function () {\n        expect(_response.statusCode).to.eql(404);\n      });\n    });\n    describe('with no endpoints', function () {\n      var _response;\n      before(() => {\n        sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(\n          new Organisation({\n            _id: 'orgid'\n          })\n        ));\n        sinon.stub(Application, 'findOneAsync').returns(Promise.resolve(\n          new Application({\n\n          })\n        ));\n        return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n          .then(() => {\n            return new Promise((resolve) => {\n              server._hapi.inject({\n                method: 'GET',\n                url: '/org/app/endpoint'\n              }, function (res) {\n                _response = res;\n                resolve();\n              });\n            });\n          });\n      });\n      after(() => {\n        Application.findOneAsync.restore();\n        Organisation.findOneAsync.restore();\n        return _mongoose.disconnectAsync();\n      });\n      it('returns a 404 response', function () {\n        expect(_response.statusCode).to.eql(404);\n      });\n    });\n    describe('with matching endpoints', function () {\n      var _response;\n      before(() => {\n        sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(\n          new Organisation({\n            _id: 'orgid'\n          })\n        ));\n        sinon.stub(Application, 'findOneAsync').returns(Promise.resolve(\n          new Application({\n            settings: {\n              live: {\n                endpoints: {\n                  '/something/else': {\n                    methods: ['GET']\n                  }\n                }\n              }\n            }\n          })\n        ));\n        return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n          .then(() => {\n            return new Promise((resolve) => {\n              server._hapi.inject({\n                method: 'GET',\n                url: '/org/app/endpoint'\n              }, function (res) {\n                _response = res;\n                resolve();\n              });\n            });\n          });\n      });\n      after(() => {\n        Application.findOneAsync.restore();\n        Organisation.findOneAsync.restore();\n        return _mongoose.disconnectAsync();\n      });\n      it('returns a 404 response', function () {\n        expect(_response.statusCode).to.eql(404);\n      });\n    });\n  });\n});\n"
+    "content": "'use strict';\nimport config from 'config';\nimport { Server } from '../../lib/server';\nimport Bluebird from 'bluebird';\nimport sinon from 'sinon';\nimport { expect } from 'chai';\nimport { _mongoose, Organisation, Application } from '@hoist/model';\nBluebird.promisifyAll(_mongoose);\n\n/** @test {EndpointHandler#onRequest} */\ndescribe('EndpointHandler', function() {\n  let server;\n  before(() => {\n    server = new Server();\n    server._createHapiServer();\n  });\n  describe('#onRequest', function() {\n    describe('with no matching organisation', function() {\n      var _response;\n      before(() => {\n        return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n          .then(() => {\n            return new Promise((resolve) => {\n              server._hapi.inject({\n                method: 'GET',\n                url: '/org/app/endpoint'\n              }, (res) => {\n                resolve(res);\n              });\n            })\n              .then(function(res) {\n                _response = res;\n              });\n          });\n      });\n      after(() => {\n        return _mongoose.disconnectAsync();\n      });\n      it('returns a 404 response', function() {\n        expect(_response.statusCode).to.eql(404);\n      });\n    });\n    describe('with no matching application', function() {\n      var _response;\n      before(() => {\n        sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(\n          new Organisation({\n            _id: 'orgid'\n          })\n        ));\n        return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n          .then(() => {\n            return new Promise((resolve) => {\n              server._hapi.inject({\n                method: 'GET',\n                url: '/org/app/endpoint'\n              }, function(res) {\n                resolve(res);\n              });\n            });\n          }).then((res) => {\n          _response = res;\n        });\n      });\n      after(() => {\n        Organisation.findOneAsync.restore();\n        return _mongoose.disconnectAsync();\n      });\n      it('returns a 404 response', function() {\n        expect(_response.statusCode).to.eql(404);\n      });\n    });\n    describe('with no endpoints', function() {\n      var _response;\n      before(() => {\n        sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(\n          new Organisation({\n            _id: 'orgid'\n          })\n        ));\n        sinon.stub(Application, 'findOneAsync').returns(Promise.resolve(\n          new Application({\n\n          })\n        ));\n        return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n          .then(() => {\n            return new Promise((resolve) => {\n              server._hapi.inject({\n                method: 'GET',\n                url: '/org/app/endpoint'\n              }, function(res) {\n                _response = res;\n                resolve();\n              });\n            });\n          });\n      });\n      after(() => {\n        Application.findOneAsync.restore();\n        Organisation.findOneAsync.restore();\n        return _mongoose.disconnectAsync();\n      });\n      it('returns a 404 response', function() {\n        expect(_response.statusCode).to.eql(404);\n      });\n    });\n    describe('with matching endpoints', function() {\n      var _response;\n      before(() => {\n        sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(\n          new Organisation({\n            _id: 'orgid'\n          })\n        ));\n        sinon.stub(Application, 'findOneAsync').returns(Promise.resolve(\n          new Application({\n            settings: {\n              live: {\n                endpoints: {\n                  '/something/else': {\n                    methods: ['GET']\n                  }\n                }\n              }\n            }\n          })\n        ));\n        return _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))\n          .then(() => {\n            return new Promise((resolve) => {\n              server._hapi.inject({\n                method: 'GET',\n                url: '/org/app/endpoint'\n              }, function(res) {\n                _response = res;\n                resolve();\n              });\n            });\n          });\n      });\n      after(() => {\n        Application.findOneAsync.restore();\n        Organisation.findOneAsync.restore();\n        return _mongoose.disconnectAsync();\n      });\n      it('returns a 404 response', function() {\n        expect(_response.statusCode).to.eql(404);\n      });\n    });\n  });\n});\n"
   },
   {
+    "__docId__": 105,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1681,7 +1737,7 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0",
     "access": null,
     "description": "EndpointHandler",
-    "lineNumber": 19,
+    "lineNumber": 11,
     "unknown": [
       {
         "tagName": "@test",
@@ -1693,6 +1749,7 @@
     ]
   },
   {
+    "__docId__": 106,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1703,9 +1760,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1",
     "access": null,
     "description": "#onRequest",
-    "lineNumber": 25
+    "lineNumber": 17
   },
   {
+    "__docId__": 107,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1716,9 +1774,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1.describe2",
     "access": null,
     "description": "with no matching organisation",
-    "lineNumber": 26
+    "lineNumber": 18
   },
   {
+    "__docId__": 108,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1729,9 +1788,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1.describe2.it3",
     "access": null,
     "description": "returns a 404 response",
-    "lineNumber": 47
+    "lineNumber": 39
   },
   {
+    "__docId__": 109,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1742,9 +1802,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1.describe4",
     "access": null,
     "description": "with no matching application",
-    "lineNumber": 51
+    "lineNumber": 43
   },
   {
+    "__docId__": 110,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1755,9 +1816,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1.describe4.it5",
     "access": null,
     "description": "returns a 404 response",
-    "lineNumber": 77
+    "lineNumber": 69
   },
   {
+    "__docId__": 111,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1768,9 +1830,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1.describe6",
     "access": null,
     "description": "with no endpoints",
-    "lineNumber": 81
+    "lineNumber": 73
   },
   {
+    "__docId__": 112,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1781,9 +1844,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1.describe6.it7",
     "access": null,
     "description": "returns a 404 response",
-    "lineNumber": 112
+    "lineNumber": 104
   },
   {
+    "__docId__": 113,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1794,9 +1858,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1.describe8",
     "access": null,
     "description": "with matching endpoints",
-    "lineNumber": 116
+    "lineNumber": 108
   },
   {
+    "__docId__": 114,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1807,9 +1872,10 @@
     "longname": "tests/unit_tests/endpoint_handler_tests.js~describe0.describe1.describe8.it9",
     "access": null,
     "description": "returns a 404 response",
-    "lineNumber": 155
+    "lineNumber": 147
   },
   {
+    "__docId__": 115,
     "kind": "testFile",
     "static": true,
     "variation": null,
@@ -1819,9 +1885,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport Hapi from 'hapi';\nimport sinon from 'sinon';\nimport Server from '../../lib/server';\nimport {\n  expect\n}\nfrom 'chai';\nimport {\n  _mongoose\n}\nfrom '@hoist/model';\n\n/** @test {Server} */\ndescribe('Server', function () {\n  let server;\n  before(() => {\n    server = new Server();\n  });\n  /** @test {Server#start} */\n  describe('#start', function () {\n    before(() => {\n      sinon.stub(Hapi.Server.prototype, 'start').callsArg(0);\n      sinon.spy(Hapi.Server.prototype, 'connection');\n      sinon.stub(_mongoose, 'connect').callsArg(1);\n      server.start();\n    });\n    after(function () {\n      Hapi.Server.prototype.start.restore();\n      Hapi.Server.prototype.connection.restore();\n      _mongoose.connect.restore();\n    });\n    it('starts a hapi server', function () {\n      return expect(Hapi.Server.prototype.start)\n        .to.have.been.called;\n    });\n    it('listens to a port', function () {\n      return expect(Hapi.Server.prototype.connection)\n        .to.have.been.calledWith({\n          host: \"0.0.0.0\",\n          port: 8000\n        });\n    });\n    it('opens up a mongoose connection', function () {\n      return expect(_mongoose.connect)\n        .to.have.been.calledWith('mongodb://db/hoist-test');\n    });\n  });\n});\n"
+    "content": "'use strict';\nimport Hapi from 'hapi';\nimport sinon from 'sinon';\nimport { Server } from '../../lib/server';\nimport { expect } from 'chai';\nimport { _mongoose } from '@hoist/model';\n\n/** @test {Server} */\ndescribe('Server', function() {\n  let server;\n  before(() => {\n    server = new Server();\n  });\n  /** @test {Server#start} */\n  describe('#start', function() {\n    before(() => {\n      sinon.stub(Hapi.Server.prototype, 'start').callsArg(0);\n      sinon.spy(Hapi.Server.prototype, 'connection');\n      sinon.stub(_mongoose, 'connect').callsArg(1);\n      server.start();\n    });\n    after(function() {\n      Hapi.Server.prototype.start.restore();\n      Hapi.Server.prototype.connection.restore();\n      _mongoose.connect.restore();\n    });\n    it('starts a hapi server', function() {\n      return expect(Hapi.Server.prototype.start)\n        .to.have.been.called;\n    });\n    it('listens to a port', function() {\n      return expect(Hapi.Server.prototype.connection)\n        .to.have.been.calledWith({\n        host: \"0.0.0.0\",\n        port: 8000\n      });\n    });\n    it('opens up a mongoose connection', function() {\n      return expect(_mongoose.connect)\n        .to.have.been.calledWith('mongodb://db/hoist-test');\n    });\n  });\n});\n"
   },
   {
+    "__docId__": 116,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1832,7 +1899,7 @@
     "longname": "tests/unit_tests/server_tests.js~describe10",
     "access": null,
     "description": "Server",
-    "lineNumber": 15,
+    "lineNumber": 9,
     "unknown": [
       {
         "tagName": "@test",
@@ -1844,6 +1911,7 @@
     ]
   },
   {
+    "__docId__": 117,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1854,7 +1922,7 @@
     "longname": "tests/unit_tests/server_tests.js~describe10.describe11",
     "access": null,
     "description": "#start",
-    "lineNumber": 21,
+    "lineNumber": 15,
     "unknown": [
       {
         "tagName": "@test",
@@ -1866,6 +1934,7 @@
     ]
   },
   {
+    "__docId__": 118,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1876,9 +1945,10 @@
     "longname": "tests/unit_tests/server_tests.js~describe10.describe11.it12",
     "access": null,
     "description": "starts a hapi server",
-    "lineNumber": 33
+    "lineNumber": 27
   },
   {
+    "__docId__": 119,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1889,9 +1959,10 @@
     "longname": "tests/unit_tests/server_tests.js~describe10.describe11.it13",
     "access": null,
     "description": "listens to a port",
-    "lineNumber": 37
+    "lineNumber": 31
   },
   {
+    "__docId__": 120,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1902,9 +1973,10 @@
     "longname": "tests/unit_tests/server_tests.js~describe10.describe11.it14",
     "access": null,
     "description": "opens up a mongoose connection",
-    "lineNumber": 44
+    "lineNumber": 38
   },
   {
+    "__docId__": 121,
     "kind": "testFile",
     "static": true,
     "variation": null,
@@ -1914,9 +1986,10 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport {\n  routeFromPath\n}\nfrom '../../lib/url_helpers';\nimport {\n  expect\n}\nfrom 'chai';\n\ndescribe('url helper functions', function () {\n  /** test {routeFromPath} */\n  describe('routeFromPath', function () {\n    it('returns null if no endpoints', function () {\n      expect(routeFromPath({}, 'POST', '/mixedCaseName/status?name=ryan')).to.eql(null);\n    });\n    it('returns null if null endpoints', function () {\n      expect(routeFromPath(null, 'GET', '/mixedCaseName/status?name=ryan')).to.eql(null);\n    });\n    it('returns endpoint if direct match', function () {\n      expect(routeFromPath({\n        '/status': {\n          'methods': ['GET'],\n          'event': 'get.invoices',\n          'authenticated': true\n        }\n      }, 'GET', '/status')).to.eql({\n        'event': 'get.invoices',\n        'authenticated': true\n      });\n    });\n    it('returns endpoint if parametered match', function () {\n      expect(routeFromPath({\n        '/status/:name': {\n          'methods': ['GET', 'POST'],\n          'event': 'get.invoices',\n          'authenticated': true\n        }\n      }, 'POST', '/status/ryan')).to.eql({\n        'event': 'get.invoices',\n        'authenticated': true,\n        'name': 'ryan'\n      });\n    });\n    it('returns null if methods dont match', function () {\n      expect(routeFromPath({\n        '/status/:name': {\n          'methods': ['GET'],\n          'event': 'get.invoices',\n          'authenticated': true\n        }\n      }, 'POST', '/status/ryan')).to.eql(null);\n    });\n  });\n});\n"
+    "content": "'use strict';\nimport { routeFromPath } from '../../lib/url_helpers';\nimport { expect } from 'chai';\n\ndescribe('url helper functions', function() {\n  /** test {routeFromPath} */\n  describe('routeFromPath', function() {\n    it('returns null if no endpoints', function() {\n      expect(routeFromPath({}, 'POST', '/mixedCaseName/status?name=ryan')).to.eql(null);\n    });\n    it('returns null if null endpoints', function() {\n      expect(routeFromPath(null, 'GET', '/mixedCaseName/status?name=ryan')).to.eql(null);\n    });\n    it('returns endpoint if direct match', function() {\n      expect(routeFromPath({\n        '/status': {\n          'methods': ['GET'],\n          'event': 'get.invoices',\n          'authenticated': true\n        }\n      }, 'GET', '/status')).to.eql({\n        'event': 'get.invoices',\n        'authenticated': true\n      });\n    });\n    it('returns endpoint if parametered match', function() {\n      expect(routeFromPath({\n        '/status/:name': {\n          'methods': ['GET', 'POST'],\n          'event': 'get.invoices',\n          'authenticated': true\n        }\n      }, 'POST', '/status/ryan')).to.eql({\n        'event': 'get.invoices',\n        'authenticated': true,\n        'name': 'ryan'\n      });\n    });\n    it('returns null if methods dont match', function() {\n      expect(routeFromPath({\n        '/status/:name': {\n          'methods': ['GET'],\n          'event': 'get.invoices',\n          'authenticated': true\n        }\n      }, 'POST', '/status/ryan')).to.eql(null);\n    });\n  });\n});\n"
   },
   {
+    "__docId__": 122,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1927,9 +2000,10 @@
     "longname": "tests/unit_tests/url_helpers_tests.js~describe15",
     "access": null,
     "description": "url helper functions",
-    "lineNumber": 11
+    "lineNumber": 5
   },
   {
+    "__docId__": 123,
     "kind": "testDescribe",
     "static": true,
     "variation": null,
@@ -1940,9 +2014,10 @@
     "longname": "tests/unit_tests/url_helpers_tests.js~describe15.describe16",
     "access": null,
     "description": "test {routeFromPath}",
-    "lineNumber": 13
+    "lineNumber": 7
   },
   {
+    "__docId__": 124,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1953,9 +2028,10 @@
     "longname": "tests/unit_tests/url_helpers_tests.js~describe15.describe16.it17",
     "access": null,
     "description": "returns null if no endpoints",
-    "lineNumber": 14
+    "lineNumber": 8
   },
   {
+    "__docId__": 125,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1966,9 +2042,10 @@
     "longname": "tests/unit_tests/url_helpers_tests.js~describe15.describe16.it18",
     "access": null,
     "description": "returns null if null endpoints",
-    "lineNumber": 17
+    "lineNumber": 11
   },
   {
+    "__docId__": 126,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1979,9 +2056,10 @@
     "longname": "tests/unit_tests/url_helpers_tests.js~describe15.describe16.it19",
     "access": null,
     "description": "returns endpoint if direct match",
-    "lineNumber": 20
+    "lineNumber": 14
   },
   {
+    "__docId__": 127,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -1992,9 +2070,10 @@
     "longname": "tests/unit_tests/url_helpers_tests.js~describe15.describe16.it20",
     "access": null,
     "description": "returns endpoint if parametered match",
-    "lineNumber": 32
+    "lineNumber": 26
   },
   {
+    "__docId__": 128,
     "kind": "testIt",
     "static": true,
     "variation": null,
@@ -2005,6 +2084,6 @@
     "longname": "tests/unit_tests/url_helpers_tests.js~describe15.describe16.it21",
     "access": null,
     "description": "returns null if methods dont match",
-    "lineNumber": 45
+    "lineNumber": 39
   }
 ]

@@ -48,9 +48,9 @@
   },
   "dependencies": {
     "@hoist/broker": "^2.0.0-pre.2",
-    "@hoist/errors": "^1.0.1",
+    "@hoist/errors": "^2.0.0-pre.1",
     "@hoist/logger": "^1.0.0",
-    "@hoist/model": "^1.1.0",
+    "@hoist/model": "^2.0.0-pre.8",
     "babel": "^6.5.1",
     "babel-preset-es2015": "^6.5.0",
     "babel-register": "^6.5.1",

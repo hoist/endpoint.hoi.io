@@ -1,21 +1,33 @@
 'use strict';
-import { Server } from '../../lib/server';
+import {
+  Server
+}
+from '../../lib/server';
 import config from 'config';
-import { expect } from 'chai';
+import {
+  expect
+}
+from 'chai';
 import sinon from 'sinon';
 import Bluebird from 'bluebird';
 import fs from 'fs';
 import path from 'path';
-import { _mongoose, Organisation, Application } from '@hoist/model';
+import {
+  _mongoose, Organisation, Application
+}
+from '@hoist/model';
 import FormData from 'form-data';
 import streamToPromise from 'stream-to-promise';
-import { Publisher } from '@hoist/broker';
+import {
+  Publisher
+}
+from '@hoist/broker';
 
 Bluebird.promisifyAll(_mongoose);
-describe('Posting Data', function() {
-  before(function(done) {
+describe('Posting Data', function () {
+  before(function (done) {
     _mongoose.connectAsync(config.get('Hoist.mongo.core.connectionString'))
-      .then(function() {
+      .then(function () {
         return Promise.all([
           new Organisation({
             _id: 'orgid',
@@ -42,20 +54,20 @@ describe('Posting Data', function() {
         ]);
       }).nodeify(done);
   });
-  after(function() {
+  after(function () {
     return Promise.all([
-      Organisation.removeAsync({}),
-      Application.removeAsync({})
-    ])
-      .then(function() {
+        Organisation.removeAsync({}),
+        Application.removeAsync({})
+      ])
+      .then(function () {
         return _mongoose.disconnectAsync();
       });
   });
-  describe('text/xml', function() {
+  describe('text/xml', function () {
     var _response;
     var _brokerEvent;
-    before(function(done) {
-      sinon.stub(Publisher.prototype, 'publish', function(event) {
+    before(function (done) {
+      sinon.stub(Publisher.prototype, 'publish', function (event) {
         _brokerEvent = event;
 
         return Promise.resolve(event);
@@ -68,21 +80,22 @@ describe('Posting Data', function() {
         payload: fs.readFileSync(path.resolve(__dirname, '../fixtures/large_xml.xml')),
         headers: {
           'Content-Type': 'text/xml',
-          'user-agent': "hoist-unit-test"
+          'user-agent': "hoist-unit-test",
+          'x-priority': 5
         }
-      }, function(res) {
+      }, function (res) {
         //console.log(res);
         _response = res;
         done();
       });
     });
-    after(function() {
+    after(function () {
       Publisher.prototype.publish.restore();
     });
-    it('responds with 200', function() {
+    it('responds with 200', function () {
       expect(_response.statusCode).to.eql(200);
     });
-    it('saves payload on event', function() {
+    it('saves payload on event', function () {
       expect(_brokerEvent.payload).to.eql({
         _request: {
           body: fs.readFileSync(path.resolve(__dirname, '../fixtures/large_xml.xml')).toString(),
@@ -96,24 +109,25 @@ describe('Posting Data', function() {
         }
       });
     });
-    it('sets brokeredevent details', function() {
+    it('sets brokeredevent details', function () {
       expect(_brokerEvent.applicationId).to.eql('appid');
       expect(_brokerEvent.environment).to.eql('live');
       expect(_brokerEvent.eventName).to.eql('post:data');
+      expect(_brokerEvent.priority).to.eql(5);
     });
-    it('sets headers on response', function() {
+    it('sets headers on response', function () {
       expect(_response.headers['x-hoist-cid']).to.eql(_brokerEvent.correlationId);
       expect(_response.headers['x-hoist-eid']).to.eql(_brokerEvent.eventId);
     });
-    it('sends back event', function() {
+    it('sends back event', function () {
       expect(_response.payload).to.eql(JSON.stringify(_brokerEvent));
     });
   });
-  describe('application/json', function() {
+  describe('application/json', function () {
     var _response;
     var _brokerEvent;
-    before(function(done) {
-      sinon.stub(Publisher.prototype, 'publish', function(brokerEvent) {
+    before(function (done) {
+      sinon.stub(Publisher.prototype, 'publish', function (brokerEvent) {
         _brokerEvent = brokerEvent;
         return Promise.resolve(brokerEvent);
       });
@@ -127,21 +141,22 @@ describe('Posting Data', function() {
         },
         headers: {
           'Content-Type': 'application/json',
-          'user-agent': "hoist-unit-test"
+          'user-agent': "hoist-unit-test",
+          'x-priority': 5
         }
-      }, function(res) {
+      }, function (res) {
         //console.log(res);
         _response = res;
         done();
       });
     });
-    after(function() {
+    after(function () {
       Publisher.prototype.publish.restore();
     });
-    it('responds with 200', function() {
+    it('responds with 200', function () {
       expect(_response.statusCode).to.eql(200);
     });
-    it('saves payload on event', function() {
+    it('saves payload on event', function () {
       expect(_brokerEvent.payload).to.eql({
         somekey: 'value',
         _request: {
@@ -158,27 +173,28 @@ describe('Posting Data', function() {
         }
       });
     });
-    it('sets brokeredevent details', function() {
+    it('sets brokeredevent details', function () {
       expect(_brokerEvent.applicationId).to.eql('appid');
       expect(_brokerEvent.environment).to.eql('live');
       expect(_brokerEvent.eventName).to.eql('post:data');
+         expect(_brokerEvent.priority).to.eql(5);
     });
-    it('sets headers on response', function() {
+    it('sets headers on response', function () {
       expect(_response.headers['x-hoist-cid']).to.eql(_brokerEvent.correlationId);
       expect(_response.headers['x-hoist-eid']).to.eql(_brokerEvent.eventId);
     });
-    it('sends back event', function() {
+    it('sends back event', function () {
       expect(_response.payload).to.eql(JSON.stringify(_brokerEvent));
     });
   });
-  describe('form', function() {
+  describe('form', function () {
     var _response;
     var _brokerEvent;
     var headers;
-    before(function(done) {
+    before(function (done) {
       var form = new FormData();
       form.append('my_field', 'my_value');
-      sinon.stub(Publisher.prototype, 'publish', function(brokerEvent) {
+      sinon.stub(Publisher.prototype, 'publish', function (brokerEvent) {
         _brokerEvent = brokerEvent;
         return Promise.resolve(brokerEvent);
       });
@@ -187,26 +203,26 @@ describe('Posting Data', function() {
       headers = form.getHeaders();
       headers['user-agent'] = "hoist-unit-test";
       headers['content-length'] = "169";
-      streamToPromise(form).then(function(payload) {
+      streamToPromise(form).then(function (payload) {
         server._hapi.inject({
           method: 'POST',
           url: '/organisation/application/endpoint/for/data',
           payload: payload,
           headers: headers
-        }, function(res) {
+        }, function (res) {
           _response = res;
           done();
         });
       });
     });
-    after(function() {
+    after(function () {
       Publisher.prototype.publish.restore();
 
     });
-    it('responds with 200', function() {
+    it('responds with 200', function () {
       expect(_response.statusCode).to.eql(200);
     });
-    it('saves payload on event', function() {
+    it('saves payload on event', function () {
       expect(_brokerEvent.payload).to.eql({
         "my_field": "my_value",
         _request: {
@@ -219,16 +235,16 @@ describe('Posting Data', function() {
         }
       });
     });
-    it('sets brokeredevent details', function() {
+    it('sets brokeredevent details', function () {
       expect(_brokerEvent.applicationId).to.eql('appid');
       expect(_brokerEvent.environment).to.eql('live');
       expect(_brokerEvent.eventName).to.eql('post:data');
     });
-    it('sets headers on response', function() {
+    it('sets headers on response', function () {
       expect(_response.headers['x-hoist-cid']).to.eql(_brokerEvent.correlationId);
       expect(_response.headers['x-hoist-eid']).to.eql(_brokerEvent.eventId);
     });
-    it('sends back event', function() {
+    it('sends back event', function () {
       expect(_response.payload).to.eql(JSON.stringify(_brokerEvent));
     });
   });

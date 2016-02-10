@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">lib/connector_handler.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="https://github.com/hoist/endpoint.hoi.io" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/authorization.js~Authorisation.html">Authorisation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/connector_handler.js~ConnectorHandler.html">ConnectorHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/endpoint_handler.js~EndpointHandler.html">EndpointHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/router.js~Router.html">Router</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-routeFromPath">routeFromPath</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">lib/connector_handler.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+import logger from &apos;@hoist/logger&apos;;
+import errors from &apos;@hoist/errors&apos;;
+import { Authorization } from &apos;./authorization&apos;;
+import fs from &apos;fs&apos;;
+import path from &apos;path&apos;;
+import config from &apos;config&apos;;
+import { BouncerToken, ConnectorSetting } from &apos;@hoist/model&apos;;
+import { Publisher } from &apos;@hoist/broker&apos;;
+
+export class ConnectorHandler {
+  constructor() {
+    this._logger = logger.child({
+      cls: this.constructor.name
+    });
+    this._publisher = new Publisher();
+  }
+  _loadConnector(connectorSettings) {
+    return Promise.resolve()
+      .then(() =&gt; {
+        var connectorPath = path.resolve(path.join(config.get(&apos;Hoist.filePaths.connectors&apos;), connectorSettings.connectorType, &apos;current&apos;));
+        /*istanbul ignore if */
+        if (!fs.existsSync(connectorPath)) {
+          throw new errors.connector.InvalidError();
+        }
+
+        var realpath = fs.readlinkSync(connectorPath);
+        logger.info({
+          connectorPath: connectorPath,
+          realpath: realpath
+        }, &apos;connectorPath&apos;);
+        return require(realpath);
+      })
+      .then((Connector) =&gt; {
+        connectorSettings.settings._connectorKey = connectorSettings.key;
+        connectorSettings.settings._applicationId = connectorSettings.application;
+        return new Connector(connectorSettings.settings);
+      });
+  }
+  onRequest(request, reply) {
+    this._logger.info(&apos;starting connector request&apos;);
+    return Promise.resolve()
+      .then(() =&gt; {
+        return BouncerToken.findOneAsync({
+          key: request.params.connectorKey
+        });
+      }).then((bouncerToken) =&gt; {
+      if (!bouncerToken) {
+        throw new errors.Http404Error(&apos;invalid key&apos;);
+      }
+      return ConnectorSetting.findOneAsync({
+        application: bouncerToken.application,
+        environment: bouncerToken.environment,
+        key: bouncerToken.connectorKey
+      }).then((connectorSettings) =&gt; {
+        if (!connectorSettings) {
+          throw new errors.Http500Error(&apos;unable to find connector settings&apos;);
+        }
+        return this._loadConnector(connectorSettings);
+      }).then((connector) =&gt; {
+        if (!connector) {
+          throw new errors.Http500Error(&apos;unable to load connector&apos;);
+        }
+        if (!connector.intercept) {
+          return reply({
+            ok: true
+          });
+        }
+        return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))
+          .then(function() {
+            return reply({
+              ok: true
+            });
+          });
+      });
+    }).catch((err) =&gt; {
+      this._logger.error(err);
+      reply(err);
+    });
+
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.4)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

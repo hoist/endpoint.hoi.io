@@ -6,15 +6,14 @@ var helpers = require('./gulp/helpers');
 requireDir('./gulp/tasks', {
   recurse: true
 });
-gulp.task('test', ['eslint-build', 'mocha-server'], function () {
+gulp.task('test', ['mocha-server'], function () {
   console.log('checking for error');
   if (helpers.getError()) {
     throw helpers.getError();
   }
 });
 gulp.task('default', function () {
-  return gulp.start('eslint-build',
-    'mocha-server');
+  return gulp.start('mocha-server');
 });
 
 gulp.task('post-commit', ['test', 'esdoc']);

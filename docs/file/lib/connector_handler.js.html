@@ -46,12 +46,22 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
 import logger from &apos;@hoist/logger&apos;;
 import errors from &apos;@hoist/errors&apos;;
-import { Authorization } from &apos;./authorization&apos;;
+import {
+  Authorization
+} from &apos;./authorization&apos;;
 import fs from &apos;fs&apos;;
 import path from &apos;path&apos;;
 import config from &apos;config&apos;;
-import { BouncerToken, ConnectorSetting } from &apos;@hoist/model&apos;;
-import { Publisher } from &apos;@hoist/broker&apos;;
+import {
+  BouncerToken,
+  ConnectorSetting
+} from &apos;@hoist/model&apos;;
+import {
+  Publisher
+} from &apos;@hoist/broker&apos;;
+import {
+  isFunction
+} from &apos;lodash&apos;;
 
 export class ConnectorHandler {
   constructor() {
@@ -77,6 +87,9 @@ export class ConnectorHandler {
         return require(realpath);
       })
       .then((Connector) =&gt; {
+        if (Connector.default &amp;&amp; isFunction(Connector.default)) {
+          Connector = Connector.default;
+        }
         connectorSettings.settings._connectorKey = connectorSettings.key;
         connectorSettings.settings._applicationId = connectorSettings.application;
         return new Connector(connectorSettings.settings);
@@ -90,38 +103,38 @@ export class ConnectorHandler {
           key: request.params.connectorKey
         });
       }).then((bouncerToken) =&gt; {
-      if (!bouncerToken) {
-        throw new errors.Http404Error(&apos;invalid key&apos;);
-      }
-      return ConnectorSetting.findOneAsync({
-        application: bouncerToken.application,
-        environment: bouncerToken.environment,
-        key: bouncerToken.connectorKey
-      }).then((connectorSettings) =&gt; {
-        if (!connectorSettings) {
-          throw new errors.Http500Error(&apos;unable to find connector settings&apos;);
+        if (!bouncerToken) {
+          throw new errors.Http404Error(&apos;invalid key&apos;);
         }
-        return this._loadConnector(connectorSettings);
-      }).then((connector) =&gt; {
-        if (!connector) {
-          throw new errors.Http500Error(&apos;unable to load connector&apos;);
-        }
-        if (!connector.intercept) {
-          return reply({
-            ok: true
-          });
-        }
-        return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))
-          .then(function() {
+        return ConnectorSetting.findOneAsync({
+          application: bouncerToken.application,
+          environment: bouncerToken.environment,
+          key: bouncerToken.connectorKey
+        }).then((connectorSettings) =&gt; {
+          if (!connectorSettings) {
+            throw new errors.Http500Error(&apos;unable to find connector settings&apos;);
+          }
+          return this._loadConnector(connectorSettings);
+        }).then((connector) =&gt; {
+          if (!connector) {
+            throw new errors.Http500Error(&apos;unable to load connector&apos;);
+          }
+          if (!connector.intercept) {
             return reply({
               ok: true
             });
-          });
+          }
+          return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))
+            .then(function () {
+              return reply({
+                ok: true
+              });
+            });
+        });
+      }).catch((err) =&gt; {
+        this._logger.error(err);
+        reply(err);
       });
-    }).catch((err) =&gt; {
-      this._logger.error(err);
-      reply(err);
-    });
 
   }
 }

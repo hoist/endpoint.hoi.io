@@ -377,7 +377,7 @@
     "access": null,
     "description": null,
     "lineNumber": 1,
-    "content": "'use strict';\nimport logger from '@hoist/logger';\nimport errors from '@hoist/errors';\nimport { Authorization } from './authorization';\nimport fs from 'fs';\nimport path from 'path';\nimport config from 'config';\nimport { BouncerToken, ConnectorSetting } from '@hoist/model';\nimport { Publisher } from '@hoist/broker';\n\nexport class ConnectorHandler {\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n  _loadConnector(connectorSettings) {\n    return Promise.resolve()\n      .then(() => {\n        var connectorPath = path.resolve(path.join(config.get('Hoist.filePaths.connectors'), connectorSettings.connectorType, 'current'));\n        /*istanbul ignore if */\n        if (!fs.existsSync(connectorPath)) {\n          throw new errors.connector.InvalidError();\n        }\n\n        var realpath = fs.readlinkSync(connectorPath);\n        logger.info({\n          connectorPath: connectorPath,\n          realpath: realpath\n        }, 'connectorPath');\n        return require(realpath);\n      })\n      .then((Connector) => {\n        connectorSettings.settings._connectorKey = connectorSettings.key;\n        connectorSettings.settings._applicationId = connectorSettings.application;\n        return new Connector(connectorSettings.settings);\n      });\n  }\n  onRequest(request, reply) {\n    this._logger.info('starting connector request');\n    return Promise.resolve()\n      .then(() => {\n        return BouncerToken.findOneAsync({\n          key: request.params.connectorKey\n        });\n      }).then((bouncerToken) => {\n      if (!bouncerToken) {\n        throw new errors.Http404Error('invalid key');\n      }\n      return ConnectorSetting.findOneAsync({\n        application: bouncerToken.application,\n        environment: bouncerToken.environment,\n        key: bouncerToken.connectorKey\n      }).then((connectorSettings) => {\n        if (!connectorSettings) {\n          throw new errors.Http500Error('unable to find connector settings');\n        }\n        return this._loadConnector(connectorSettings);\n      }).then((connector) => {\n        if (!connector) {\n          throw new errors.Http500Error('unable to load connector');\n        }\n        if (!connector.intercept) {\n          return reply({\n            ok: true\n          });\n        }\n        return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))\n          .then(function() {\n            return reply({\n              ok: true\n            });\n          });\n      });\n    }).catch((err) => {\n      this._logger.error(err);\n      reply(err);\n    });\n\n  }\n}\n"
+    "content": "'use strict';\nimport logger from '@hoist/logger';\nimport errors from '@hoist/errors';\nimport {\n  Authorization\n} from './authorization';\nimport fs from 'fs';\nimport path from 'path';\nimport config from 'config';\nimport {\n  BouncerToken,\n  ConnectorSetting\n} from '@hoist/model';\nimport {\n  Publisher\n} from '@hoist/broker';\nimport {\n  isFunction\n} from 'lodash';\n\nexport class ConnectorHandler {\n  constructor() {\n    this._logger = logger.child({\n      cls: this.constructor.name\n    });\n    this._publisher = new Publisher();\n  }\n  _loadConnector(connectorSettings) {\n    return Promise.resolve()\n      .then(() => {\n        var connectorPath = path.resolve(path.join(config.get('Hoist.filePaths.connectors'), connectorSettings.connectorType, 'current'));\n        /*istanbul ignore if */\n        if (!fs.existsSync(connectorPath)) {\n          throw new errors.connector.InvalidError();\n        }\n\n        var realpath = fs.readlinkSync(connectorPath);\n        logger.info({\n          connectorPath: connectorPath,\n          realpath: realpath\n        }, 'connectorPath');\n        return require(realpath);\n      })\n      .then((Connector) => {\n        if (Connector.default && isFunction(Connector.default)) {\n          Connector = Connector.default;\n        }\n        connectorSettings.settings._connectorKey = connectorSettings.key;\n        connectorSettings.settings._applicationId = connectorSettings.application;\n        return new Connector(connectorSettings.settings);\n      });\n  }\n  onRequest(request, reply) {\n    this._logger.info('starting connector request');\n    return Promise.resolve()\n      .then(() => {\n        return BouncerToken.findOneAsync({\n          key: request.params.connectorKey\n        });\n      }).then((bouncerToken) => {\n        if (!bouncerToken) {\n          throw new errors.Http404Error('invalid key');\n        }\n        return ConnectorSetting.findOneAsync({\n          application: bouncerToken.application,\n          environment: bouncerToken.environment,\n          key: bouncerToken.connectorKey\n        }).then((connectorSettings) => {\n          if (!connectorSettings) {\n            throw new errors.Http500Error('unable to find connector settings');\n          }\n          return this._loadConnector(connectorSettings);\n        }).then((connector) => {\n          if (!connector) {\n            throw new errors.Http500Error('unable to load connector');\n          }\n          if (!connector.intercept) {\n            return reply({\n              ok: true\n            });\n          }\n          return connector.intercept(new Authorization(request, reply, bouncerToken, this._publisher))\n            .then(function () {\n              return reply({\n                ok: true\n              });\n            });\n        });\n      }).catch((err) => {\n        this._logger.error(err);\n        reply(err);\n      });\n\n  }\n}\n"
   },
   {
     "__docId__": 16,
@@ -392,7 +392,7 @@
     "importPath": "@hoist/endpoint.hoi.io/lib/connector_handler.js",
     "importStyle": "{ConnectorHandler}",
     "description": null,
-    "lineNumber": 11,
+    "lineNumber": 21,
     "undocument": true,
     "interface": false
   },
@@ -406,7 +406,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#constructor",
     "access": null,
     "description": null,
-    "lineNumber": 12,
+    "lineNumber": 22,
     "undocument": true,
     "params": [],
     "generator": false
@@ -421,7 +421,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#_logger",
     "access": null,
     "description": null,
-    "lineNumber": 13,
+    "lineNumber": 23,
     "undocument": true,
     "type": {
       "types": [
@@ -439,7 +439,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#_publisher",
     "access": null,
     "description": null,
-    "lineNumber": 16,
+    "lineNumber": 26,
     "undocument": true,
     "type": {
       "types": [
@@ -457,7 +457,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#_loadConnector",
     "access": null,
     "description": null,
-    "lineNumber": 18,
+    "lineNumber": 28,
     "undocument": true,
     "params": [
       {
@@ -484,7 +484,7 @@
     "longname": "lib/connector_handler.js~ConnectorHandler#onRequest",
     "access": null,
     "description": null,
-    "lineNumber": 40,
+    "lineNumber": 53,
     "undocument": true,
     "params": [
       {

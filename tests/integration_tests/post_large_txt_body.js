@@ -1,5 +1,8 @@
 'use strict';
-import Server from '../../lib/server';
+import {
+  Server
+}
+from '../../lib/server';
 import config from 'config';
 import {
   expect
@@ -10,9 +13,7 @@ import Bluebird from 'bluebird';
 import fs from 'fs';
 import path from 'path';
 import {
-  _mongoose,
-  Organisation,
-  Application
+  _mongoose, Organisation, Application
 }
 from '@hoist/model';
 import FormData from 'form-data';
@@ -79,7 +80,8 @@ describe('Posting Data', function () {
         payload: fs.readFileSync(path.resolve(__dirname, '../fixtures/large_xml.xml')),
         headers: {
           'Content-Type': 'text/xml',
-          'user-agent': "hoist-unit-test"
+          'user-agent': "hoist-unit-test",
+          'x-priority': 5
         }
       }, function (res) {
         //console.log(res);
@@ -111,6 +113,7 @@ describe('Posting Data', function () {
       expect(_brokerEvent.applicationId).to.eql('appid');
       expect(_brokerEvent.environment).to.eql('live');
       expect(_brokerEvent.eventName).to.eql('post:data');
+      expect(_brokerEvent.priority).to.eql(5);
     });
     it('sets headers on response', function () {
       expect(_response.headers['x-hoist-cid']).to.eql(_brokerEvent.correlationId);
@@ -138,7 +141,8 @@ describe('Posting Data', function () {
         },
         headers: {
           'Content-Type': 'application/json',
-          'user-agent': "hoist-unit-test"
+          'user-agent': "hoist-unit-test",
+          'x-priority': 5
         }
       }, function (res) {
         //console.log(res);
@@ -173,6 +177,7 @@ describe('Posting Data', function () {
       expect(_brokerEvent.applicationId).to.eql('appid');
       expect(_brokerEvent.environment).to.eql('live');
       expect(_brokerEvent.eventName).to.eql('post:data');
+         expect(_brokerEvent.priority).to.eql(5);
     });
     it('sets headers on response', function () {
       expect(_response.headers['x-hoist-cid']).to.eql(_brokerEvent.correlationId);

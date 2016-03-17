@@ -1,6 +1,9 @@
 'use strict';
 import config from 'config';
-import Server from '../../lib/server';
+import {
+  Server
+}
+from '../../lib/server';
 import Bluebird from 'bluebird';
 import sinon from 'sinon';
 import {
@@ -8,9 +11,7 @@ import {
 }
 from 'chai';
 import {
-  _mongoose,
-  Organisation,
-  Application
+  _mongoose, Organisation, Application
 }
 from '@hoist/model';
 Bluebird.promisifyAll(_mongoose);
@@ -113,7 +114,7 @@ describe('EndpointHandler', function () {
         expect(_response.statusCode).to.eql(404);
       });
     });
-    describe('with matching endpoints', function () {
+    describe('with no matching endpoints', function () {
       var _response;
       before(() => {
         sinon.stub(Organisation, 'findOneAsync').returns(Promise.resolve(
@@ -139,7 +140,10 @@ describe('EndpointHandler', function () {
             return new Promise((resolve) => {
               server._hapi.inject({
                 method: 'GET',
-                url: '/org/app/endpoint'
+                url: '/org/app/endpoint',
+                headers: {
+                  'x-priority': 15
+                }
               }, function (res) {
                 _response = res;
                 resolve();

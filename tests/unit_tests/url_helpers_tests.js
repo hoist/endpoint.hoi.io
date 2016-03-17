@@ -1,23 +1,17 @@
 'use strict';
-import {
-  routeFromPath
-}
-from '../../lib/url_helpers';
-import {
-  expect
-}
-from 'chai';
+import { routeFromPath } from '../../lib/url_helpers';
+import { expect } from 'chai';
 
-describe('url helper functions', function () {
+describe('url helper functions', function() {
   /** test {routeFromPath} */
-  describe('routeFromPath', function () {
-    it('returns null if no endpoints', function () {
+  describe('routeFromPath', function() {
+    it('returns null if no endpoints', function() {
       expect(routeFromPath({}, 'POST', '/mixedCaseName/status?name=ryan')).to.eql(null);
     });
-    it('returns null if null endpoints', function () {
+    it('returns null if null endpoints', function() {
       expect(routeFromPath(null, 'GET', '/mixedCaseName/status?name=ryan')).to.eql(null);
     });
-    it('returns endpoint if direct match', function () {
+    it('returns endpoint if direct match', function() {
       expect(routeFromPath({
         '/status': {
           'methods': ['GET'],
@@ -29,7 +23,7 @@ describe('url helper functions', function () {
         'authenticated': true
       });
     });
-    it('returns endpoint if parametered match', function () {
+    it('returns endpoint if parametered match', function() {
       expect(routeFromPath({
         '/status/:name': {
           'methods': ['GET', 'POST'],
@@ -42,7 +36,7 @@ describe('url helper functions', function () {
         'name': 'ryan'
       });
     });
-    it('returns null if methods dont match', function () {
+    it('returns null if methods dont match', function() {
       expect(routeFromPath({
         '/status/:name': {
           'methods': ['GET'],

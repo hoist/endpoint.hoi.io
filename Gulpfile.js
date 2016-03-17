@@ -1,19 +1,21 @@
 'use strict';
 var gulp = require('gulp');
 var requireDir = require('require-dir');
+var runSequence = require('run-sequence');
 require('git-guppy')(gulp);
 var helpers = require('./gulp/helpers');
 requireDir('./gulp/tasks', {
   recurse: true
 });
-gulp.task('test', ['mocha-server'], function () {
-  console.log('checking for error');
-  if (helpers.getError()) {
-    throw helpers.getError();
-  }
+gulp.task('test', function (cb) {
+  return runSequence('clean', ['eslint-build', 'mocha-server'], function () {
+    cb(helpers.getError());
+  });
 });
-gulp.task('default', function () {
-  return gulp.start('mocha-server');
+gulp.task('default', function (cb) {
+  runSequence('test', 'esdoc', () => {
+    cb();
+  });
 });
 
 gulp.task('post-commit', ['test', 'esdoc']);

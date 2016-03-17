@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">lib/endpoint_handler.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <a data-ice="repoURL" href="https://github.com/hoist/endpoint.hoi.io" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/authorization.js~Authorisation.html">Authorisation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/connector_handler.js~ConnectorHandler.html">ConnectorHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/endpoint_handler.js~EndpointHandler.html">EndpointHandler</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/router.js~Router.html">Router</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/lib/server.js~Server.html">Server</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-routeFromPath">routeFromPath</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">lib/endpoint_handler.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+import errors from &apos;@hoist/errors&apos;;
+import logger from &apos;@hoist/logger&apos;;
+import Boom from &apos;boom&apos;;
+import Moment from &apos;moment&apos;;
+import {
+  routeFromPath
+}
+from &apos;./url_helpers&apos;;
+import {
+  Publisher
+}
+from &apos;@hoist/broker&apos;;
+import {
+  Organisation, Application, EventMetric, Event
+}
+from &apos;@hoist/model&apos;;
+import {
+  clone, isObject, extend
+}
+from &apos;lodash&apos;;
+import uuid from &apos;uuid&apos;;
+
+/**
+ * class to handle incoming requests
+ */
+
+export class EndpointHandler {
+  /**
+   * create new handler
+   */
+  constructor() {
+    this._logger = logger.child({
+      cls: this.constructor.name
+    });
+    this._publisher = new Publisher();
+  }
+
+  /**
+   * handle incoming requests and turn them into events
+   * @returns {Promise}
+   */
+  onRequest(req, reply) {
+    this._logger.info(&apos;got a webhook request&apos;);
+    return Organisation.findOneAsync({
+        slug: req.params.orgSlug
+      }).then((organisation) =&gt; {
+        if (!organisation) {
+          throw new errors.model.NotFoundError();
+        }
+        return Application.findOneAsync({
+          slug: req.params.appSlug,
+          organisation: organisation._id
+        });
+      }).then((application) =&gt; {
+        if (!application) {
+          throw new errors.model.NotFoundError();
+        }
+        if ((!application.settings.live) || (!application.settings.live.endpoints)) {
+          throw new errors.Http404Error(&apos;No Endpoint Found&apos;);
+        }
+        this._logger.info({
+          application: application._id
+        }, &apos;found org and app&apos;);
+        req.params.endpoint = &apos;/&apos; + req.params.endpoint;
+        return Promise.resolve(routeFromPath(application.settings.live.endpoints, req.method, req.params.endpoint))
+          .then((route) =&gt; {
+            this._logger.info({
+              application: application._id,
+              route: route,
+              endpoint: &apos;req.params.endpoint&apos;
+            }, &apos;mapped route&apos;);
+            if (!route) {
+              throw new errors.Http404Error(&apos;No Endpoint Found&apos;);
+            }
+            this._logger.info(&apos;got an endpoint&apos;);
+            var payload = clone(route, true);
+            delete payload.event;
+            delete payload.method;
+            delete payload.authenticate;
+            if (req.method.toLowerCase() === &apos;post&apos;) {
+              if (isObject(req.payload)) {
+                payload = extend(payload, req.payload);
+              }
+            }
+
+            payload._request = {
+              body: req.payload,
+              headers: req.headers,
+              url: req.params.endpoint,
+              method: req.method
+            };
+
+            var queryString = req.url.search;
+
+            if (queryString) {
+              payload._request.queryString = queryString;
+              payload._request.query = req.url.query;
+            }
+            var priority = req.headers[&apos;x-priority&apos;] || 3;
+            delete payload._request.headers.host;
+            delete payload._request.headers[&apos;x-priority&apos;];
+            this._logger.info(&apos;building event&apos;);
+            var ev = new Event({
+              eventId: uuid.v4().split(&apos;-&apos;).join(&apos;&apos;),
+              applicationId: application._id,
+              eventName: route.event,
+              environment: &apos;live&apos;,
+              correlationId: require(&apos;uuid&apos;).v4(),
+              payload: payload,
+              priority: priority
+            });
+            return ev;
+          });
+      })
+      .then((event) =&gt; {
+        this._logger.info({
+          event: event
+        }, &apos;sending event to broker&apos;);
+
+        return this._publisher.publish(event)
+          .then(() =&gt; {
+            var raisedDate = new Moment();
+            var update = {
+              $inc: {}
+            };
+            update.$inc.totalRaised = 1;
+            update.$inc[&apos;raised.&apos; + raisedDate.utc().minutes()] = 1;
+            EventMetric.updateAsync({
+              application: event.applicationId,
+              environment: &apos;live&apos;,
+              eventName: event.eventName,
+              timestampHour: raisedDate.utc().startOf(&apos;hour&apos;).toDate()
+            }, update, {
+              upsert: true
+            }).catch(function (err) {
+              this._logger.alert(err);
+              this._logger.error(err);
+            });
+            return event;
+          });
+      })
+      .then((event) =&gt; {
+        this._logger.info(&apos;sending reply&apos;);
+        var response = reply(event.toObject());
+        response.header(&apos;x-hoist-cid&apos;, event.correlationId);
+        response.header(&apos;x-hoist-eid&apos;, event.eventId);
+        response.statusCode = 200;
+      }).catch((err) =&gt; {
+        this._logger.error(err);
+        if (!errors.isHoistError(err)) {
+          console.log(err);
+          this._logger.alert(err);
+          err = new errors.HoistError();
+        }
+        this._logger.info(&apos;sending error reply&apos;);
+        reply(Boom.wrap(err, parseInt(err.code)));
+      });
+  }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.6)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

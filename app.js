@@ -1,37 +1,37 @@
 'use strict';
-require("babel/register");
+require("babel-register");
 var logger = require('@hoist/logger');
-var Server = require('./lib/server');
+var Server = require('./lib/server').Server;
 process.title = 'hoist-webhooks-listener';
 
 var server = new Server();
 
-var gracefullShutdown = function (SIG) {
+var gracefullShutdown = function(SIG) {
   logger.info({
     SIG: SIG
   }, 'server stopping');
   return Promise.all([
     server.stop()
-  ]).then(function () {
+  ]).then(function() {
     process.kill(process.pid, SIG);
-  }).catch(function (err) {
+  }).catch(function(err) {
     logger.error(err);
     logger.alert(err);
     throw err;
   });
 };
-server.start().then(function () {
+server.start().then(function() {
   logger.info('service started');
-  process.once('SIGUSR2', function () {
+  process.once('SIGUSR2', function() {
     return gracefullShutdown('SIGUSR2');
   });
-  process.once('SIGTERM', function () {
+  process.once('SIGTERM', function() {
     return gracefullShutdown('SIGTERM');
   });
-  process.once('SIGINT', function () {
+  process.once('SIGINT', function() {
     return gracefullShutdown('SIGINT');
   });
-}).catch(function (err) {
+}).catch(function(err) {
   logger.error(err);
   logger.alert(err);
   process.exit(1);

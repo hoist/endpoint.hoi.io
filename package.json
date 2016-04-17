@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/hoist/endpoint.hoi.io",
   "devDependencies": {
-    "babel-eslint": "^5.0.0",
+    "babel-eslint": "^6.0.2",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
     "del": "^2.2.0",
